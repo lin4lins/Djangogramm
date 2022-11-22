@@ -1,0 +1,7 @@
+{% autoescape off %}
+Dear friend,
+
+Please, use the link to confirm your registration.
+http://{{ domain }}{% url "confirm" uidb64=user_id token=token %}
+
+{% endautoescape %}
