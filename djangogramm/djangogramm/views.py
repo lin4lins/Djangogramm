@@ -29,8 +29,9 @@ class SignUpView(View):
             user.save()
 
             self.__send_confirmation_email(request, user)
+            return HttpResponse("success")
 
-        return HttpResponse("success")
+        return HttpResponse("Something went wrong")
 
     @staticmethod
     def __send_confirmation_email(request, user) -> None:
@@ -47,7 +48,7 @@ class SignUpView(View):
         )
 
 
-class PostConfirmationView(View):
+class ConfirmationView(View):
     def get(self, request, uidb64, token):
         try:
             user_id = force_str(urlsafe_base64_decode(uidb64))
@@ -59,5 +60,6 @@ class PostConfirmationView(View):
         if user and confirmation_token.check_token(user, token):
             user.is_active = True
             user.save()
+            return HttpResponse("Your email is confirmed")
 
-        return HttpResponse("confirmed <3")
+        return HttpResponse("Your email has already been confirmed")

@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import PostConfirmationView, SignUpView
+from .views import ConfirmationView, SignUpView
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
-    path('confirm/<uidb64>/<token>', PostConfirmationView.as_view(), name='confirm')
+    path('confirm/<uidb64>/<token>', ConfirmationView.as_view(), name='confirm')
 ]
