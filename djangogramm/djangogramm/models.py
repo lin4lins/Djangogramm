@@ -6,6 +6,7 @@ from django.db import models
 
 class User(AbstractBaseUser):
     email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=False)
 
     # fields to fill after email confirmation
     full_name = models.CharField(max_length=255, null=True)
