@@ -1,7 +1,8 @@
+from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.utils.encoding import (DjangoUnicodeDecodeError, force_bytes,
                                    force_str)
@@ -24,12 +25,9 @@ class SignUpView(View):
     def post(self, request):
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-
+            user = form.save(commit=True)
             self.__send_confirmation_email(request, user)
-            return HttpResponse("success")
+            return HttpResponse("Check your email")
 
         return HttpResponse("Something went wrong")
 
@@ -60,6 +58,6 @@ class ConfirmationView(View):
         if user and confirmation_token.check_token(user, token):
             user.is_active = True
             user.save()
-            return HttpResponse("Your email is confirmed")
+            login(request, user)
 
-        return HttpResponse("Your email has already been confirmed")
+        return render(request, "home.html")
