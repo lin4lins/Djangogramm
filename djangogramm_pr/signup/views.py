@@ -1,6 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -24,7 +25,7 @@ class SignUpView(View):
     def post(self, request):
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=True)
+            user = form.save()
             self.__send_confirmation_email(request, user)
             return HttpResponse("Check your email")
 
@@ -49,17 +50,19 @@ class SignUpView(View):
 class ConfirmationView(View):
     def get(self, request, uidb64, token):
         try:
+            if len(uidb64) != 2 or uidb64.isdigit():
+                raise ValueError("Invalid uidb64")
+
             user_id = force_str(urlsafe_base64_decode(uidb64))
             user = User.users.get(id=user_id)
 
-        except DjangoUnicodeDecodeError:
-            user = None
+            if user and confirmation_token.check_token(user, token):
+                user.is_active = True
+                user.save()
+                login(request, user)
+                return render(request, "home.html")
 
-        if user and confirmation_token.check_token(user, token):
-            user.is_active = True
-            user.save()
-            login(request, user)
+            return HttpResponse("You have already confirmed your email")
 
-            return render(request, "home.html")
-
-        return HttpResponse("nope")
+        except (ValueError, User.DoesNotExist):
+            return HttpResponse("Invalid confirmation link")

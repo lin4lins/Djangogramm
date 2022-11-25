@@ -34,7 +34,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'djangogramm.apps.DjangogrammConfig',
-    'signin.apps.AuthConfig',
+    'signup.apps.AuthConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -127,7 +127,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth details
-AUTH_USER_MODEL = 'signin.User'
+AUTH_USER_MODEL = 'signup.User'
 LOGIN_URL = 'auth'
 LOGIN_REDIRECT_URL = '/'
 

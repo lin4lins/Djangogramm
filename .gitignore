@@ -100,7 +100,7 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
+djangogramm_pr/djgrm_site/.env
 .venv
 env/
 venv/

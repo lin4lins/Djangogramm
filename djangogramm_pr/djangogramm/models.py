@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
-from signin.models import User
+from signup.models import User
 
 
 # Create your models here.
