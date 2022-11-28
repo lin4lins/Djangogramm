@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core import mail
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -25,6 +26,7 @@ class TestSignUpView(TestCase):
     def setUp(self):
         self.client = Client()
         self.path = reverse('signup')
+        settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
     def test_get(self):
         response = self.client.get(self.path)
