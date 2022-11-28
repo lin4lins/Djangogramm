@@ -7,13 +7,7 @@
 
     <body>
         <h1>Home</h1>
-        {% block content %}
-        {% if user.is_authenticated %}
-          Hi {{ user.username }}!
-        {% else %}
-          <p>You are not logged in</p>
-          <a href="{% url 'login' %}">Log In</a>
-        {% endif %}
-        {% endblock %}
+        <h2> You successfully confirmed your email</h2>
+        <button onClick="location.href='/profile'" class="btn btn-success">Fill out a profile</button>
         </body>
 </html>

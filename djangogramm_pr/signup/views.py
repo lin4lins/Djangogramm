@@ -56,9 +56,9 @@ class ConfirmationView(View):
                 user.is_active = True
                 user.save()
                 login(request, user)
-                return render(request, "home.html")
+                return render(request, "confirmed.html")
 
-            return HttpResponse("You have already confirmed your email")
+            return render(request, "confirmed_earlier.html")
 
         except (DjangoUnicodeDecodeError, User.DoesNotExist):
-            return HttpResponse("Invalid confirmation link")
+            return render(request, "errors.html", {'error_messages': ["Invalid confirmation link"]})
