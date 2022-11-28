@@ -60,5 +60,5 @@ class ConfirmationView(View):
 
             return render(request, "confirmed_earlier.html")
 
-        except (DjangoUnicodeDecodeError, User.DoesNotExist):
+        except (DjangoUnicodeDecodeError, User.DoesNotExist, ValueError):
             return render(request, "errors.html", {'error_messages': ["Invalid confirmation link"]})
