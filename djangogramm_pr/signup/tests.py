@@ -31,7 +31,7 @@ class TestSignUpView(TestCase):
     def test_get(self):
         response = self.client.get(self.path)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'signup.html')
+        self.assertTemplateUsed(response, 'signup/signup.html')
 
     def test_post(self):
         response = self.client.post(self.path, data=VALID_USER_FORM_DATA)
@@ -60,7 +60,7 @@ class TestConfirmationView(TestCase):
     def test_get(self):
         response = self.client.get(self.__get_confirmation_link())
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'confirmed.html')
+        self.assertTemplateUsed(response, 'signup/confirmed.html')
 
     def test_invalid_uidb64(self):
         response = self.client.get(self.__get_confirmation_link(is_uidb64_invalid=True))
@@ -79,7 +79,7 @@ class TestConfirmationView(TestCase):
         self.client.get(confirmation_link)
         response = self.client.get(confirmation_link)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'confirmed_earlier.html')
+        self.assertTemplateUsed(response, 'signup/confirmed_earlier.html')
         self.assertContains(response, 'You have already confirmed your email')
         
     @staticmethod
