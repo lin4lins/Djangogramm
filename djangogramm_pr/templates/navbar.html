@@ -1,0 +1,25 @@
+{% extends base.html %}
+
+{% block content %}
+  <nav>
+    <ul>
+        <li>
+            <a href="/feed/"> Feed </a>
+        </li>
+        <li>
+            <a href="/profile/"> Profile </a>
+        </li>
+        {% if user.is_authorized %}
+        <li>
+            <a href="/logout/">Log Out</a>
+        </li>
+        {% else %}
+        <li>
+            <a href="/auth/login/">Log In</a>
+        </li>
+        <li>
+            <a href="/auth/sigin/">Sign Up</a>
+        </li>
+    </ul>
+  </nav>
+{% endblock %}
