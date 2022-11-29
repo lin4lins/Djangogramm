@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.utils.encoding import (DjangoUnicodeDecodeError, force_bytes, force_str)
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
-from djgrm_site.settings import EMAIL_HOST_USER
+from mysite.settings import EMAIL_HOST_USER
 
 from .forms import SignUpForm
 from .models import User
