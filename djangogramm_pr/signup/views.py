@@ -19,7 +19,7 @@ from .utils import confirmation_token
 class SignUpView(View):
     def get(self, request):
         form = SignUpForm()
-        return render(request, 'signup.html', {'form': form})
+        return render(request, 'signup/signup.html', {'form': form})
 
     def post(self, request):
         form = SignUpForm(request.POST)
@@ -33,7 +33,7 @@ class SignUpView(View):
 
     @staticmethod
     def __send_confirmation_email(request, user) -> None:
-        message = render_to_string("confirmation_email.html",
+        message = render_to_string("signup/confirmation_email.html",
                                    {'domain': get_current_site(request),
                                     'user_id': urlsafe_base64_encode(force_bytes(user.pk)),
                                     'token': confirmation_token.make_token(user)})
@@ -56,9 +56,9 @@ class ConfirmationView(View):
                 user.is_active = True
                 user.save()
                 login(request, user)
-                return render(request, "confirmed.html")
+                return render(request, "signup/confirmed.html")
 
-            return render(request, "confirmed_earlier.html")
+            return render(request, "signup/confirmed_earlier.html")
 
         except (DjangoUnicodeDecodeError, User.DoesNotExist, ValueError):
             return render(request, "errors.html", {'error_messages': ["Invalid confirmation link"]})
