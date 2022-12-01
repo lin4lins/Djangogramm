@@ -6,6 +6,15 @@ from signup.models import User
 
 # Create your models here.
 
+class Profile(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=255, null=True)
+    bio = models.CharField(max_length=255, null=True)
+    avatar = models.ImageField(upload_to="images", null=True)
+
+    def __str__(self):
+        return f"full_name:{self.full_name}, bio:{self.bio}"
+
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
