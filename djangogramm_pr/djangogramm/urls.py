@@ -1,6 +1,6 @@
 from django.urls import path
 
-from djangogramm.views import ProfileCreateView, ProfileView, ProfileUpdateView
+from djangogramm.views.profile_views import ProfileView, ProfileCreateView, ProfileUpdateView
 
 urlpatterns = [
     path('profile/', ProfileView.as_view(), name="profile"),
