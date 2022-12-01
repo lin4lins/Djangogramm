@@ -1,13 +1,12 @@
 from django import forms
-from djangogramm.models import User
+from djangogramm.models import Profile
 
 
-class EditProfileForm(forms.Form):
+class ProfileForm(forms.ModelForm):
     full_name = forms.CharField(required=False, max_length=100)
     bio = forms.CharField(required=False, help_text="Tell us about you", max_length=255)
     avatar = forms.ImageField(required=False)
 
     class Meta:
-        model = User
-
-        fields = ["full_name", "bio", "avatar_path"]
+        model = Profile
+        fields = ["full_name", "bio", "avatar"]

@@ -1,21 +1,9 @@
-<!doctype html>
-<html lang="en">
+{% extends "base.html" %}
 
-    <head>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    </head>
-
-    <body>
-        <h1>Profile</h1>
-            <form method="post" class="form-group">
-                {% csrf_token %}
-                {% for field in form %}
-                    <p>
-                        {{ field.label_tag }}<br>
-                        {{ field }}
-                    </p>
-                {% endfor %}
-                <button type="submit" class="btn btn-success">Submit</button>
-            </form>
-    </body>
-</html>
+{% block content%}
+    <h1>Profile</h1>
+    <p>Full name: {{ profile.full_name }}</p>
+    <p>Bio: {{ profile.bio }}</p>
+    <p>Avatar: {{ profile.avatar }}</p>
+    <button onClick="location.href='/profile/update'" class="btn btn-success">Edit</button>
+{% endblock %}
