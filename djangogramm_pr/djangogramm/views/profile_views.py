@@ -12,23 +12,25 @@ from djangogramm.models import Profile
 
 class ProfileCreateView(LoginRequiredMixin, View):
     form = ProfileForm
-    login_url = "/auth/login"
+    login_url = '/auth/login'
 
     def get(self, request):
         return render(request, 'djangogramm/profile_create.html', {'form': self.form})
 
     def post(self, request):
-        form = self.form(request.POST)
+        form = self.form(request.POST, request.FILES)
+
         if form.is_valid():
             profile = form.save(commit=False)
             profile.user = self.request.user
+            profile.avatar = form.cleaned_data['avatar']
             profile.save()
             return redirect(f'/profile/')
 
 
 class ProfileView(LoginRequiredMixin, View):
     model = Profile
-    login_url = "/auth/login"
+    login_url = '/auth/login'
 
     def get(self, request):
         profile = self.model.objects.get(user=request.user)
@@ -38,7 +40,7 @@ class ProfileView(LoginRequiredMixin, View):
 class ProfileUpdateView(LoginRequiredMixin, View):
     model = Profile
     form = ProfileForm
-    login_url = "/auth/login"
+    login_url = '/auth/login'
 
     def get(self, request):
         profile = self.model.objects.filter(user=request.user).first()
@@ -48,7 +50,8 @@ class ProfileUpdateView(LoginRequiredMixin, View):
         return render(request, 'djangogramm/profile_update.html', {'form': filled_form})
 
     def post(self, request):
-        form = self.form(request.POST)
+        form = self.form(request.POST, request.FILES)
+
         if form.is_valid():
             profile = self.model.objects.filter(user=request.user).first()
             profile.full_name = form.cleaned_data['full_name']

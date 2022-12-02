@@ -4,6 +4,7 @@
     <h1>Profile</h1>
     <p>Full name: {{ profile.full_name }}</p>
     <p>Bio: {{ profile.bio }}</p>
-    <p>Avatar: {{ profile.avatar }}</p>
+    <br>
+    {{ profile.avatar }}
     <button onClick="location.href='/profile/update'" class="btn btn-success">Edit</button>
 {% endblock %}

@@ -10,7 +10,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=255, null=True)
     bio = models.CharField(max_length=255, null=True)
-    avatar = models.ImageField(upload_to="images", null=True)
+    avatar = models.ImageField(upload_to="avatars/", null=True)
 
     def __str__(self):
         return f"full_name:{self.full_name}, bio:{self.bio}"
