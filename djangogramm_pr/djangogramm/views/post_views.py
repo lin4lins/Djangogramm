@@ -18,28 +18,30 @@ class PostCreateView(LoginRequiredMixin, View):
     def post(self, request):
         user = request.user
         post_form = self.post_form(request.POST)
-        images = request.FILES.getlist('file')
+        image_forms = [self.image_form(file) for file in request.FILES]
 
         post = self.__create_post(post_form, user)
-        self.__create_images(images, post)
+        self.__create_images(image_forms, post)
         self.__create_tags(post)
         return render(request, "djangogramm/feed.html")
 
     @staticmethod
     def __create_post(form: PostForm, user) -> Post:
         if form.is_valid():
-            post_to_create = Post(author=user,
-                                  caption=form.cleaned_data['caption'])
+            post_to_create = Post(author=user, caption=form.cleaned_data['caption'])
             post_to_create.save()
             return post_to_create
 
         raise InvalidFormException(form.errors)
 
     @staticmethod
-    def __create_images(images: list, post: Post):
-        for position, image in enumerate(images, 1):
-            image_to_create = Image(post=post, file=image, position=position)
-            image_to_create.save()
+    def __create_images(forms: list, post: Post):
+        for position, form in enumerate(forms, 1):
+            if form.is_valid():
+                image_to_create = Image(post=post, file=form.cleaned_data['file'], position=position)
+                image_to_create.save()
+
+            raise InvalidFormException(form.errors)
 
     @staticmethod
     def __create_tags(post: Post):
