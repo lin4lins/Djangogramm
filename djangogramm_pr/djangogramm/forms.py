@@ -1,11 +1,9 @@
 from django import forms
-from djangogramm.models import Profile
+from djangogramm.models import Profile, Post, Image
 
 
 class ProfileForm(forms.ModelForm):
-    full_name = forms.CharField(required=False, max_length=100)
-    bio = forms.CharField(required=False, help_text="Tell us about you", max_length=255)
-    avatar = forms.ImageField(required=False)
+    bio = forms.CharField(widget=forms.Textarea)
 
     class Meta:
         model = Profile
@@ -13,7 +11,7 @@ class ProfileForm(forms.ModelForm):
 
 
 class PostForm(forms.ModelForm):
-    caption = forms.CharField(required=False, max_length=255)
+    caption = forms.CharField(widget=forms.Textarea)
 
     class Meta:
         model = Post
@@ -21,18 +19,8 @@ class PostForm(forms.ModelForm):
 
 
 class ImageForm(forms.ModelForm):
-    file = forms.ImageField(label="Images", required=True, widget=forms.ClearableFileInput(attrs={'multiple': True}))
-
+    file = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = Image
         fields = ["file"]
-
-
-class TagForm(forms.ModelForm):
-    name = forms.CharField(label="Tags", required=False)
-
-    class Meta:
-        model = Image
-        fields = ["name"]
-

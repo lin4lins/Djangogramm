@@ -8,7 +8,7 @@ from signup.models import User
 
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=255, null=True)
+    full_name = models.CharField(max_length=100, null=True)
     bio = models.CharField(max_length=255, null=True)
     avatar = models.ImageField(upload_to="avatars/", null=True)
 
@@ -18,8 +18,8 @@ class Profile(models.Model):
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    caption = models.CharField(max_length=255)
-    publication_date = models.DateField()
+    caption = models.CharField(null=True, max_length=255)
+    publication_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"caption:{self.caption}"
