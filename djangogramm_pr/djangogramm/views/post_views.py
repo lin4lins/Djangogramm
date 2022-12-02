@@ -18,7 +18,7 @@ class PostCreateView(LoginRequiredMixin, View):
     def post(self, request):
         user = request.user
         post_form = self.post_form(request.POST)
-        image_forms = [self.image_form(file) for file in request.FILES]
+        image_forms = [self.image_form(image) for image in request.FILES]
 
         post = self.__create_post(post_form, user)
         self.__create_images(image_forms, post)
@@ -38,7 +38,7 @@ class PostCreateView(LoginRequiredMixin, View):
     def __create_images(forms: list, post: Post):
         for position, form in enumerate(forms, 1):
             if form.is_valid():
-                image_to_create = Image(post=post, file=form.cleaned_data['file'], position=position)
+                image_to_create = Image(post=post, image=form.cleaned_data['image'], position=position)
                 image_to_create.save()
 
             raise InvalidFormException(form.errors)
