@@ -5,8 +5,7 @@
     <form method="POST" class="form-group" enctype="multipart/form-data">
         {% csrf_token %}
         {{ post_form.as_div }}
-        {{ image_form.as_p }}
-        {{ tag_form.as_p }}
+        {{ image_form.as_div }}
         <button type="submit" value="Submit" class="btn btn-success">Submit</button>
     </form>
 {% endblock %}

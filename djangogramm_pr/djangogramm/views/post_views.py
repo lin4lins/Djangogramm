@@ -1,25 +1,55 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
-from django.views.generic import CreateView
-
-from djangogramm.forms import PostForm, ImageForm, TagForm
+from djangogramm.errors import InvalidFormException
+from djangogramm.forms import ImageForm, PostForm
+from djangogramm.models import Image, Post, Tag
 
 
 class PostCreateView(LoginRequiredMixin, View):
-    login_url = "/auth/login"
     post_form = PostForm
     image_form = ImageForm
-    tag_form = TagForm
+    login_url = "/auth/login"
 
     def get(self, request):
         return render(request, 'djangogramm/post_create.html', {"post_form": self.post_form,
-                                                                "image_form": self.image_form,
-                                                                "tag_form": self.tag_form})
+                                                                "image_form": self.image_form})
 
     def post(self, request):
-        post = PostForm(request.POST)
-        images = ImageForm(request.FILES)
-        tags = TagForm(request.POST)
-        print(post)
-        # print(dict(request.POST.items()))
+        user = request.user
+        post_form = self.post_form(request.POST)
+        images = request.FILES.getlist('file')
+
+        post = self.__create_post(post_form, user)
+        self.__create_images(images, post)
+        self.__create_tags(post)
+        return render(request, "djangogramm/feed.html")
+
+    @staticmethod
+    def __create_post(form: PostForm, user) -> Post:
+        if form.is_valid():
+            post_to_create = Post(author=user,
+                                  caption=form.cleaned_data['caption'])
+            post_to_create.save()
+            return post_to_create
+
+        raise InvalidFormException(form.errors)
+
+    @staticmethod
+    def __create_images(images: list, post: Post):
+        for position, image in enumerate(images, 1):
+            image_to_create = Image(post=post, file=image, position=position)
+            image_to_create.save()
+
+    @staticmethod
+    def __create_tags(post: Post):
+        tags = PostCreateView.__get_tags_from_text(post.caption)
+        for tag in tags:
+            tag_to_create = Tag(name=tag)
+            tag_to_create.save()
+            tag_to_create.posts.add(post)
+            tag_to_create.save()
+
+    @staticmethod
+    def __get_tags_from_text(text: str) -> list:
+        return [word.replace("#", '') for word in text.split() if word[0] == "#"]
