@@ -1,7 +1,7 @@
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
 from signup.models import User
+from PIL import Image as PIL_Image
 
 
 # Create your models here.
@@ -29,6 +29,12 @@ class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="posts/")
     position = models.IntegerField(default=1)
+
+    def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+        image_to_compress = PIL_Image.open(instance.image.path)
+        image_to_compress.save(instance.photo.path, quality=40, optimize=True)
+        return instance
 
 
 class Tag(models.Model):
