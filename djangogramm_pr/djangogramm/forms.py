@@ -3,7 +3,8 @@ from djangogramm.models import Profile, Post, Image
 
 
 class ProfileForm(forms.ModelForm):
-    bio = forms.CharField(widget=forms.Textarea)
+    bio = forms.CharField(widget=forms.Textarea, required=False)
+    avatar = forms.ImageField(required=False)
 
     class Meta:
         model = Profile
@@ -11,7 +12,7 @@ class ProfileForm(forms.ModelForm):
 
 
 class PostForm(forms.ModelForm):
-    caption = forms.CharField(widget=forms.Textarea)
+    caption = forms.CharField(widget=forms.Textarea, required=False)
 
     class Meta:
         model = Post
@@ -19,7 +20,7 @@ class PostForm(forms.ModelForm):
 
 
 class ImageForm(forms.ModelForm):
-    file = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    image = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
 
     class Meta:
         model = Image
