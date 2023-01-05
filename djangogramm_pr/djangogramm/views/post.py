@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from djangogramm.errors import InvalidFormException
 from djangogramm.forms import ImageForm, PostForm
@@ -18,12 +18,12 @@ class PostCreateView(LoginRequiredMixin, View):
     def post(self, request):
         user = request.user
         post_form = self.post_form(request.POST)
-        image_forms = [self.image_form(image) for image in request.FILES]
+        images = request.FILES.getlist('image')
 
         post = self.__create_post(post_form, user)
-        self.__create_images(image_forms, post)
+        self.__create_images(images, post)
         self.__create_tags(post)
-        return render(request, "djangogramm/feed.html")
+        return redirect('/')
 
     @staticmethod
     def __create_post(form: PostForm, user) -> Post:
@@ -35,13 +35,10 @@ class PostCreateView(LoginRequiredMixin, View):
         raise InvalidFormException(form.errors)
 
     @staticmethod
-    def __create_images(forms: list, post: Post):
-        for position, form in enumerate(forms, 1):
-            if form.is_valid():
-                image_to_create = Image(post=post, image=form.cleaned_data['image'], position=position)
+    def __create_images(images: list, post: Post):
+        for position, image in enumerate(images, 1):
+                image_to_create = Image(post=post, image=image, preview=image, position=position)
                 image_to_create.save()
-
-            raise InvalidFormException(form.errors)
 
     @staticmethod
     def __create_tags(post: Post):
