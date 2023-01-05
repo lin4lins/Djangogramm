@@ -19,22 +19,26 @@ class Profile(models.Model):
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     caption = models.CharField(null=True, max_length=255)
-    publication_date = models.DateField(auto_now_add=True)
+    publication_datetime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"caption:{self.caption}"
 
 
 class Image(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="posts/")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = "media")
+    image = models.ImageField(upload_to="posts/originals")
+    preview = models.ImageField(upload_to="posts/previews")
     position = models.IntegerField(default=1)
 
     def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
-        image_to_compress = PIL_Image.open(instance.image.path)
-        image_to_compress.save(instance.photo.path, quality=40, optimize=True)
-        return instance
+        super().save(*args, **kwargs)
+        image_to_compress = PIL_Image.open(self.preview.path)
+        image_to_compress.crop().save(self.preview.path, quality=10, optimize=False)
+        return self
+
+    def __str__(self):
+        return f"image:{self.image}"
 
 
 class Tag(models.Model):
@@ -43,5 +47,5 @@ class Tag(models.Model):
 
 
 class Like(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = "likes")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "likes")
