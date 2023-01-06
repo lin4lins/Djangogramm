@@ -1,37 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container">
+<div class="container mt-4">
   <div class="row justify-content-md-center mt-5">
-    <div class="col col-2 border border-primary">
-      <img src="/media/{{profile.avatar}}" class="img-thumbnail rounded-circle"/>
+    <div class="col col-2">
+      <img src="/media/{{profile.avatar}}" class="img-thumbnail rounded-circle" style="width:150px;height:150px;object-fit:cover;">
     </div>
-    <div class="col col-9 ml-3 border border-primary">
-      <div class="row border border-primary">
-        <div class="col border border-primary">
+    <div class="col col-9 ml-3">
+      <div class="row #">
+        <div class="col">
           <h5>{{profile.full_name}}</h5>
         </div>
-        <div class="col col-4 border border-primary">
+        <div class="col col-4">
           <button type="button" class="btn btn-outline-dark" onClick="location.href='/profile/update'">Edit profile</button>
         </div>
       </div>
-      <div class="row mt-3 border border-primary">
-        <div class="col border border-primary">
-          <p><strong>0</strong> publications</p>
+      <div class="row mt-3">
+        <div class="col">
+          <p><strong>{{ posts|length }}</strong> publications</p>
         </div>
-        <div class="col border border-primary">
-          <h6><strong>20</strong> followers</h6>
+        <div class="col">
+          <p><strong>20</strong> followers</p>
         </div>
-        <div class="col border border-primary">
+        <div class="col">
           <p><strong>20</strong> subscriptions</p>
         </div>
       </div>
-      {% if not profile.bio %}
-      <div class="row border border-primary">
-        <div class="col col-8 #">
-          <h6>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-            Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-            Donec quam felis, ultricies nec, pellentesque eu, pretium.</h6>
+      {% if profile.bio %}
+      <div class="row mt-3">
+        <div class="col col-8">
+          <h6>{{profile.bio}}</h6>
         </div>
       </div>
       {% endif %}
@@ -42,14 +40,67 @@
   <br>
   <div class="row">
     {% for post in posts %}
-    <div class="col col-4 pb-5 text-center border border-primary">
-      {% for img in post.media.all %}
-        <img src="/media/{{img.image}}" style="width:300px;height:300px;object-fit:cover;">
-      {% endfor %}
+    <div class="col col-4 pb-5 text-center">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#postModal{{post.id}}">
+          <img src="/media/{{post.media.all.0.preview}}" style="width:300px;height:300px;object-fit:cover;"/>
+        </a>
     </div>
     {% endfor %}
   </div>
 </div>
 
+{% for post in posts %}
+<div class="modal fade" id="postModal{{post.id}}" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-8 text-center bg-black">
+              <img src="/media/{{post.media.all.0.original}}"/>
+            </div>
+            <div class="col border">
+              <div class="row mt-3 pb-3 border-bottom">
+                <div class="col-2">
+                  <img src="/media/{{profile.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                </div>
+                <div class="col">
+                  <h5>{{profile.full_name}}</h5>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <p>{{post.caption}}</p>
+              </div>
+              <div class="row border-top">
+                <div class="col-1">
+                  <img onclick="updateLike()" src="/static/no-like.png" width="32" height="32"/>
+                </div>
+                <div class="col-3 text-center">
+                  <p><strong>{{ post.likes.all|length }}</strong> likes</p>
+                </div>
+                <div class="col-6"></div>
+                <div class="col">
+                  <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src="/static/dots.png" width="32" height="32">
+                    </a>
+                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+                      <li><a class="dropdown-item" href="/profile/">Edit</a></li>
+                      <li><a class="dropdown-item text-danger" href="/post/{{post.id}}/delete">Delete</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <p>Posted {{post.publication_datetime}}<p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
 
 {% endblock %}

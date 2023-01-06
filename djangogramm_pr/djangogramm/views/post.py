@@ -53,3 +53,12 @@ class PostCreateView(LoginRequiredMixin, View):
     @staticmethod
     def __get_tags_from_text(text: str) -> list:
         return [word.replace("#", '') for word in text.split() if word[0] == "#"]
+
+
+class PostDeleteView(LoginRequiredMixin, View):
+    login_url = "/auth/login"
+
+    def get(self, request, id):
+        Post.objects.filter(id=id, author=request.user).delete()
+        return redirect('/profile')
+
