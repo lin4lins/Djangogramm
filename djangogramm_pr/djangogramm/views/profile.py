@@ -9,7 +9,6 @@ from djangogramm.models import Profile, Post
 
 
 class ProfileCreateView(LoginRequiredMixin, View):
-    form = ProfileForm
     login_url = '/auth/login'
 
     def get(self, request):
@@ -31,23 +30,22 @@ class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
-        posts = Post.objects.filter(author = request.user).order_by('-publication_datetime')
+        posts = Post.objects.filter(author = profile).order_by('-publication_datetime')
         return render(request, 'djangogramm/profile.html', {'profile': profile, 'posts': posts})
 
 
 class ProfileUpdateView(LoginRequiredMixin, View):
-    form = ProfileForm
     login_url = '/auth/login'
 
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
-        filled_form = self.form(initial={'full_name': profile.full_name,
+        filled_form = ProfileForm(initial={'full_name': profile.full_name,
                                                'bio': profile.bio,
                                                'avatar': profile.avatar})
         return render(request, 'djangogramm/profile_update.html', {'form': filled_form})
 
     def post(self, request):
-        form = self.form(request.POST, request.FILES)
+        form = ProfileForm(request.POST, request.FILES)
 
         if form.is_valid():
             profile = Profile.objects.get(user=request.user)
@@ -56,4 +54,6 @@ class ProfileUpdateView(LoginRequiredMixin, View):
             profile.avatar = form.cleaned_data['avatar']
             profile.save()
             return redirect('/profile')
+
+        print(form.errors)
 

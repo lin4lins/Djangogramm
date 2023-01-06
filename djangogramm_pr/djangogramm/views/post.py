@@ -16,20 +16,19 @@ class PostCreateView(LoginRequiredMixin, View):
                                                                 "image_form": self.image_form})
 
     def post(self, request):
-        user = request.user
+        profile = Profile.objects.get(user=request.user)
         post_form = self.post_form(request.POST)
         images = request.FILES.getlist('image')
 
-        post = self.__create_post(post_form, user)
+        post = self.__create_post(post_form, profile)
         self.__create_images(images, post)
         self.__create_tags(post)
         return redirect('/')
 
     @staticmethod
-    def __create_post(form: PostForm, user) -> Post:
+    def __create_post(form: PostForm, profile: Profile) -> Post:
         if form.is_valid():
-            author = Profile.objects.filter(user=user)
-            post_to_create = Post(author=author, caption=form.cleaned_data['caption'])
+            post_to_create = Post(author=profile, caption=form.cleaned_data['caption'])
             post_to_create.save()
             return post_to_create
 
@@ -59,6 +58,7 @@ class PostDeleteView(LoginRequiredMixin, View):
     login_url = "/auth/login"
 
     def get(self, request, id):
-        Post.objects.filter(id=id, author=request.user).delete()
+        profile = Profile.objects.get(user=request.user)
+        Post.objects.filter(id=id, author=profile).delete()
         return redirect('/profile')
 
