@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from djangogramm.errors import InvalidFormException
 from djangogramm.forms import ImageForm, PostForm
-from djangogramm.models import Image, Post, Tag
+from djangogramm.models import Image, Post, Tag, Profile
 
 
 class PostCreateView(LoginRequiredMixin, View):
@@ -28,7 +28,8 @@ class PostCreateView(LoginRequiredMixin, View):
     @staticmethod
     def __create_post(form: PostForm, user) -> Post:
         if form.is_valid():
-            post_to_create = Post(author=user, caption=form.cleaned_data['caption'])
+            author = Profile.objects.filter(user=user)
+            post_to_create = Post(author=author, caption=form.cleaned_data['caption'])
             post_to_create.save()
             return post_to_create
 
@@ -37,7 +38,7 @@ class PostCreateView(LoginRequiredMixin, View):
     @staticmethod
     def __create_images(images: list, post: Post):
         for position, image in enumerate(images, 1):
-                image_to_create = Image(post=post, image=image, preview=image, position=position)
+                image_to_create = Image(post=post, original=image, preview=image, position=position)
                 image_to_create.save()
 
     @staticmethod
