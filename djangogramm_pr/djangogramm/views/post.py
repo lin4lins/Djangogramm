@@ -36,7 +36,7 @@ class PostCreateView(LoginRequiredMixin, View):
 
     @staticmethod
     def __create_images(images: list, post: Post):
-        for position, image in enumerate(images, 1):
+        for position, image in enumerate(images):
                 image_to_create = Image(post=post, original=image, preview=image, position=position)
                 image_to_create.save()
 

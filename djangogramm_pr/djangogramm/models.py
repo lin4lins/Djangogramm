@@ -2,6 +2,8 @@ from django.db import models
 
 from PIL import Image as PIL_Image
 
+from signup.models import User
+
 
 # Create your models here.
 
@@ -28,16 +30,13 @@ class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = "media")
     original = models.ImageField(upload_to="posts/originals")
     preview = models.ImageField(upload_to="posts/previews")
-    position = models.IntegerField(default=1)
+    position = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         image_to_compress = PIL_Image.open(self.preview.path)
         image_to_compress.crop().save(self.preview.path, quality=10, optimize=False)
         return self
-
-    def __str__(self):
-        return f"image:{self.image}"
 
 
 class Tag(models.Model):
