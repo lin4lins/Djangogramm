@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container mt-4">
+<div class="container-lg mt-4">
   <div class="row justify-content-md-center mt-5">
     <div class="col col-2">
       <img src="/media/{{profile.avatar}}" class="img-thumbnail rounded-circle" style="width:150px;height:150px;object-fit:cover;">
@@ -40,9 +40,12 @@
   <br>
   <div class="row">
     {% for post in posts %}
-    <div class="col col-4 pb-5 text-center">
+    <div class="col col-4 pb-5 text-center" style="position: relative;display: block;">
         <a href="#" data-bs-toggle="modal" data-bs-target="#postModal{{post.id}}">
-          <img src="/media/{{post.media.all.0.preview}}" style="width:300px;height:300px;object-fit:cover;"/>
+          <img src="/media/{{post.media.all.0.original}}" style="width:300px;height:300px;object-fit:cover;"/>
+          {% if post.media.all|length > 1%}
+          <img src="/static/duplicate.png" width="25px" height="25px" style="left:76%;top:2%;position:absolute;"/>
+          {% endif %}
         </a>
     </div>
     {% endfor %}
@@ -54,10 +57,41 @@
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-body p-0">
-        <div class="container-fluid">
+        <div class="container">
           <div class="row">
             <div class="col-8 text-center bg-black">
-              <img src="/media/{{post.media.all.0.original}}"/>
+              <div id="postIndicators-{{post.id}}" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                  {% for image in post.media.all%}
+                    {% if image.position == 0 %}
+                    <button type="button" data-bs-target="#postIndicators-{{post.id}}" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 0"></button>
+                    {% else %}
+                    <button type="button" data-bs-target="#postIndicators-{{post.id}}" data-bs-slide-to="{{image.position}}" aria-label="Slide {{image.position}}"></button>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <div class="carousel-inner">
+                  {% for image in post.media.all%}
+                    {% if image.position == 0 %}
+                    <div class="carousel-item active">
+                      <img src="/media/{{image.original}}" style="width:600px;height:600px;object-fit:cover;"/>
+                    </div>
+                    {% else %}
+                    <div class="carousel-item">
+                      <img src="/media/{{image.original}}" style="width:600px;height:600px;object-fit:cover;"/>
+                    </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#postIndicators-{{post.id}}" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#postIndicators-{{post.id}}" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
             </div>
             <div class="col border">
               <div class="row mt-3 pb-3 border-bottom">
@@ -92,7 +126,7 @@
                 </div>
               </div>
               <div class="row">
-                <p>Posted {{post.publication_datetime}}<p>
+                <p>Posted {{post.created_at}}<p>
               </div>
             </div>
           </div>
