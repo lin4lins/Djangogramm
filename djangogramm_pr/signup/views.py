@@ -50,7 +50,7 @@ class ConfirmationView(View):
     def get(self, request, uidb64, token):
         try:
             user_id = force_str(urlsafe_base64_decode(uidb64))
-            user = User.users.get(id=user_id)
+            user = User.objects.get(id=user_id)
 
             if user and confirmation_token.check_token(user, token):
                 user.is_active = True

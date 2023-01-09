@@ -1,18 +1,8 @@
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-from .managers import UserManager
 # Create your models here.
 
 
-class User(AbstractBaseUser):
-    email = models.EmailField(unique=True)
-    is_active = models.BooleanField(default=False)
-
+class User(AbstractUser):
     def __str__(self):
         return f"email:{self.email}"
-
-    users = UserManager()
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
