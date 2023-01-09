@@ -11,6 +11,9 @@
         <div class="col">
           <h5>{{profile.full_name}}</h5>
         </div>
+        <div class="col col-4">
+          <button type="button" class="btn btn-outline-dark" onClick="location.href='/profile/update'">Edit profile</button>
+        </div>
       </div>
       <div class="row mt-3">
         <div class="col">
@@ -57,7 +60,6 @@
         <div class="container">
           <div class="row">
             <div class="col-8 text-center bg-black">
-              {% if post.media.all|length > 1 %}
               <div id="postIndicators-{{post.id}}" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-indicators">
                   {% for image in post.media.all%}
@@ -90,9 +92,6 @@
                   <span class="visually-hidden">Next</span>
                 </button>
               </div>
-              {% else %}
-              <img src="/media/{{post.media.all.0.original}}" style="width:600px;height:600px;object-fit:cover;"/>
-              {% endif %}
             </div>
             <div class="col border">
               <div class="row mt-3 pb-3 border-bottom">
@@ -114,6 +113,17 @@
                   <p><strong>{{ post.likes.all|length }}</strong> likes</p>
                 </div>
                 <div class="col-6"></div>
+                <div class="col">
+                  <div class="dropdown">
+                    <a href="#" class="d-flex align-items-center" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src="/static/dots.png" width="32" height="32">
+                    </a>
+                    <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+                      <li><a class="dropdown-item" href="/profile/">Edit</a></li>
+                      <li><a class="dropdown-item text-danger" href="/post/{{post.id}}/delete">Delete</a></li>
+                    </ul>
+                  </div>
+                </div>
               </div>
               <div class="row">
                 <p>Posted {{post.created_at}}<p>

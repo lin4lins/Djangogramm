@@ -60,5 +60,4 @@ class PostDeleteView(LoginRequiredMixin, View):
     def get(self, request, id):
         profile = Profile.objects.get(user=request.user)
         Post.objects.filter(id=id, author=profile).delete()
-        return redirect('/profile')
-
+        return redirect('/profile/me')
