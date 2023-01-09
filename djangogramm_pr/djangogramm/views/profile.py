@@ -30,9 +30,6 @@ class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request, id):
         profile = Profile.objects.get(id=id)
-        if profile.user_id == request.user.id:
-            return redirect('/profile/me')
-
         posts = Post.objects.filter(author=profile).order_by('-created_at')
         return render(request, 'djangogramm/profile.html', {'profile': profile, 'posts': posts})
 
