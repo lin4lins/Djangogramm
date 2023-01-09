@@ -2,6 +2,7 @@ from django.db import models
 
 from PIL import Image as PIL_Image
 
+from djangogramm.managers import PostQuerySet
 from signup.models import User
 
 
@@ -21,6 +22,8 @@ class Post(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     caption = models.CharField(null=True, max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = PostQuerySet().as_manager()
 
     def __str__(self):
         return f"caption:{self.caption}"
