@@ -9,7 +9,7 @@
         <div class="card mt-3">
           <div class="card-body">
             <div class="container">
-              <a class="text-decoration-none text-dark" href="profile/{% if user.username == post.author.user.username %}me{% else %}{{ post.author.id }}{% endif %}">
+              <a class="text-decoration-none text-dark" href="profile/{% if user.username == post.author.user.username %}me{% else %}{{ post.author.user.username }}{% endif %}">
                 <div class="row mb-3 bg-white">
                   <div class="col-2">
                     <img src="/media/{{post.author.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
@@ -66,7 +66,7 @@
                 </div>
               </div>
               <div class="row mt-2">
-                <a class="text-decoration-none text-dark" href="profile/{{post.author.id}}">
+                <a class="text-decoration-none text-dark" href="profile/{{post.author.user.username}">
                   <div class="col">
                     <h6><strong>{{post.author.user.username}}</strong> {{post.caption|slice:":40"}}...</h6>
                   </div>

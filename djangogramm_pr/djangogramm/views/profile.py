@@ -28,8 +28,9 @@ class ProfileCreateView(LoginRequiredMixin, View):
 class ProfileView(LoginRequiredMixin, View):
     login_url = '/auth/login'
 
-    def get(self, request, id):
-        profile = Profile.objects.get(id=id)
+    def get(self, request, username):
+        user = User.objects.get(username=username)
+        profile = Profile.objects.get(user=user)
         posts = Post.objects.filter(author=profile).order_by('-created_at')
         return render(request, 'djangogramm/profile.html', {'profile': profile, 'posts': posts})
 
