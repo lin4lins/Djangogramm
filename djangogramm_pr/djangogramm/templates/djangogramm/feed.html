@@ -14,7 +14,7 @@
                   <div class="col-2">
                     <img src="/media/{{post.author.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
                   </div>
-                  <div class="col-6">
+                  <div class="col-6 pt-2">
                     <h6>{{post.author.user.username}}</h6>
                   </div>
                 </div>
@@ -59,10 +59,16 @@
               </div>
               <div class="row mt-3 bg-white">
                 <div class="col-1">
-                  <img src="/static/no-like.png" width="32" height="32"/>
+                  {% load define_like %}
+                  {% get_like post.likes.all user as like %}
+                    {% if like %}
+                      <img id="like-{{post.id}}" src="/static/like.png" onclick="dislike({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                    {% else %}
+                      <img id="no-like-{{post.id}}" src="/static/no-like.png" onclick="like({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                    {% endif %}
                 </div>
-                <div class="col">
-                  <p><strong>{{ post.likes.all|length }}</strong> likes</p>
+                <div class="col pt-1">
+                  <h6 id="like-counter-{{post.id}}">{{ post.likes.all|length }}</h6>
                 </div>
               </div>
               <div class="row mt-2">

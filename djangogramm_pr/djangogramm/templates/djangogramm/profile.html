@@ -107,10 +107,16 @@
               </div>
               <div class="row border-top">
                 <div class="col-1">
-                  <img onclick="updateLike()" src="/static/no-like.png" width="32" height="32"/>
+                  {% load define_like %}
+                  {% get_like post.likes.all user as like %}
+                    {% if like %}
+                      <img id="like-{{post.id}}" src="/static/like.png" onclick="dislike({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                    {% else %}
+                      <img id="no-like-{{post.id}}" src="/static/no-like.png" onclick="like({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                    {% endif %}
                 </div>
                 <div class="col-3 text-center">
-                  <p><strong>{{ post.likes.all|length }}</strong> likes</p>
+                  <h6 id="like-counter-{{post.id}}">{{ post.likes.all|length }}</h6>
                 </div>
                 <div class="col-6"></div>
               </div>
