@@ -25,6 +25,9 @@ class Post(models.Model):
 
     objects = PostQuerySet().as_manager()
 
+    def get_tags_text_from_caption(self) -> list:
+        return [word.replace("#", '') for word in self.caption.split() if word[0] == "#"]
+
     def __str__(self):
         return f"caption:{self.caption}"
 
