@@ -1,17 +1,19 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
 from django.views import View
 from djangogramm.errors import InvalidFormException
 from djangogramm.forms import ImageForm, PostForm
-from djangogramm.models import Post, Profile, Image
+from djangogramm.models import Image, Post, Profile
 
 
 class PostCreateView(LoginRequiredMixin, View):
-    login_url = "/auth/login"
+    login_url = '/auth/login'
+    template_name = 'djangogramm/post_create.html'
+    redirect_url = reverse_lazy('feed')
 
     def get(self, request):
-        return render(request, 'djangogramm/post_create.html', {"post_form": PostForm,
-                                                                "image_form": ImageForm})
+        return render(request, self.template_name, {'post_form': PostForm, 'image_form': ImageForm})
 
     def post(self, request):
         post_form = PostForm(request.POST)
@@ -24,20 +26,24 @@ class PostCreateView(LoginRequiredMixin, View):
             raise InvalidFormException(image_form.errors)
 
         post = post_form.save(commit=False)
-        post.author = Profile.objects.get(user=request.user)
+        post.author = get_object_or_404(Profile, user=request.user)
         post.save()
 
-        for position, image in enumerate(request.FILES.getlist('original')):
-            image_to_create = Image(post=post, original=image, preview=image, position=position)
-            image_to_create.save()
+        self.__create_images(post, request.FILES.getlist('original'))
 
-        return redirect('/')
+        return redirect(self.redirect_url)
+
+    @staticmethod
+    def __create_images(post: Post, image_list: list) -> None:
+        for position, image in enumerate(image_list):
+            Image(post=post, original=image, preview=image, position=position).save()
 
 
 class PostDeleteView(LoginRequiredMixin, View):
-    login_url = "/auth/login"
+    login_url = '/auth/login'
+    redirect_url = reverse_lazy('profile-me')
 
     def get(self, request, id):
-        profile = Profile.objects.get(user=request.user)
-        Post.objects.filter(id=id, author=profile).delete()
-        return redirect('/profile/me')
+        profile = get_object_or_404(Profile, user=request.user)
+        get_object_or_404(Post, id=id, author=profile).delete()
+        return redirect(self.redirect_url)

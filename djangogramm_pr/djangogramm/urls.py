@@ -9,9 +9,9 @@ from djangogramm.views.tag import SearchTagView
 
 urlpatterns = [
     path('profile/create', ProfileCreateView.as_view(), name='profile-create'),
-    path('profile/update', ProfileUpdateView.as_view(), name="profile-update"),
-    path('profile/me', ProfileMeView.as_view(), name="profile-me"),
-    path('profile/<username>', ProfileView.as_view(), name="profile"),
+    path('profile/update', ProfileUpdateView.as_view(), name='profile-update'),
+    path('profile/me', ProfileMeView.as_view(), name='profile-me'),
+    path('profile/<username>', ProfileView.as_view(), name='profile'),
     path('post/create', PostCreateView.as_view(), name='post-create'),
     path('post/<id>/delete', PostDeleteView.as_view(), name='post-delete'),
     path('like/<int:post_id>/create', CreateLikeView.as_view(), name='like-create'),

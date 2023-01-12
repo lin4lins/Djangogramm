@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from djangogramm.models import Profile, Post, Image, Like, Tag
-
+from djangogramm.models import Image, Like, Post, Profile, Tag
 
 # Register your models here.
 
@@ -27,4 +26,4 @@ class LikeAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("name",)}
+    pass

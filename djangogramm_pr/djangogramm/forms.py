@@ -1,5 +1,6 @@
 from django import forms
-from djangogramm.models import Profile, Post, Image, Tag
+
+from djangogramm.models import Image, Post, Profile
 
 
 class ProfileForm(forms.ModelForm):
@@ -8,7 +9,7 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ["full_name", "bio", "avatar"]
+        fields = ['full_name', 'bio', 'avatar']
 
 
 class PostForm(forms.ModelForm):
@@ -24,4 +25,4 @@ class ImageForm(forms.ModelForm):
 
     class Meta:
         model = Image
-        fields = ["original"]
+        fields = ['original']
