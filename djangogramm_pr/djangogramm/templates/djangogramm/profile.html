@@ -103,7 +103,9 @@
                 </div>
               </div>
               <div class="row mt-3">
-                <p><strong>{{profile.user.username}}</strong> {{post.caption}}</p>
+                {% load tagify_caption %}
+                {% get_caption_with_tags post.caption as caption %}
+                <p><strong>{{profile.user.username}}</strong> {{caption}}</p>
               </div>
               <div class="row border-top">
                 <div class="col-1">

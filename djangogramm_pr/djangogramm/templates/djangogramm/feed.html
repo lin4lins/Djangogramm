@@ -74,7 +74,9 @@
               <div class="row mt-2">
                 <a class="text-decoration-none text-dark" href="profile/{% if user.username == post.author.user.username %}me{% else %}{{ post.author.user.username }}{% endif %}">
                   <div class="col">
-                    <h6><strong>{{post.author.user.username}}</strong> {{post.caption|slice:":40"}}...</h6>
+                    {% load tagify_caption %}
+                    {% get_caption_with_tags post.caption as caption %}
+                    <h6><strong>{{post.author.user.username}}</strong> {{ caption|slice:":40" }}...</h6>
                   </div>
                 </a>
               </div>

@@ -25,8 +25,20 @@ class Post(models.Model):
 
     objects = PostQuerySet().as_manager()
 
-    def get_tags_text_from_caption(self) -> list:
-        return [word.replace("#", '') for word in self.caption.split() if word[0] == "#"]
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.__create_tags()
+        return self
+
+    def __create_tags(self):
+        for tag in self.get_tags_from_caption():
+            if not Tag.objects.get(name=tag):
+                tag_to_create = Tag.objects.create(name=tag)
+                tag_to_create.posts.add(self)
+                tag_to_create.save()
+
+    def get_tags_from_caption(self) -> list:
+        return [word.replace('#', '') for word in self.caption.split() if word[0] == '#']
 
     def __str__(self):
         return f"caption:{self.caption}"
