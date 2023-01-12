@@ -1,5 +1,7 @@
 from django.db import models
 from PIL import Image as PIL_Image
+from django.shortcuts import get_object_or_404
+
 from signup.models import User
 
 from djangogramm.managers import PostQuerySet
@@ -26,15 +28,17 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.__create_tags()
+        self.__add_tags()
         return self
 
-    def __create_tags(self):
+    def __add_tags(self):
         for tag in self.get_tags_from_caption():
-            if not Tag.objects.filter(name=tag):
-                tag_to_create = Tag.objects.create(name=tag)
-                tag_to_create.posts.add(self)
-                tag_to_create.save()
+            if len(Tag.objects.filter(name=tag)) == 0:
+                tag_to_add = Tag.objects.create(name=tag)
+            else:
+                tag_to_add = get_object_or_404(Tag, name=tag)
+
+            self.tags.add(tag_to_add)
 
     def get_tags_from_caption(self) -> list:
         return [word.replace('#', '') for word in self.caption.split() if word[0] == '#']
@@ -57,7 +61,7 @@ class Image(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     posts = models.ManyToManyField(Post, related_name='tags')
 
 
