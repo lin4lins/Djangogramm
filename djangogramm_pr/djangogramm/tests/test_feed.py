@@ -1,5 +1,4 @@
 from django.urls import reverse
-
 from djangogramm.tests import BaseTestCase
 from djangogramm.tests.test_profile import create_test_profile
 

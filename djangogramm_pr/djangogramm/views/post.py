@@ -20,10 +20,10 @@ class PostCreateView(LoginRequiredMixin, View):
         image_form = ImageForm(request.POST, request.FILES)
 
         if not post_form.is_valid():
-            raise InvalidFormException(post_form.errors)
+            raise InvalidFormException()
 
         if not image_form.is_valid():
-            raise InvalidFormException(image_form.errors)
+            raise InvalidFormException()
 
         post = post_form.save(commit=False)
         post.author = get_object_or_404(Profile, user=request.user)

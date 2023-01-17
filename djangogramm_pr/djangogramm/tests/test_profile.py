@@ -1,27 +1,7 @@
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
-
-from pathlib import Path
 from djangogramm.models import Profile
-from djangogramm.tests import BaseTestCase, create_test_user
-from signup.models import User
-
-
-def get_profile_form_data(filename: str = 'profile_pic.jpeg') -> dict:
-    path_to_file = Path(__file__).parent / 'test_media' / filename
-    valid_profile_form_data = {'full_name': 'Test Tester',
-                               'bio': 'Test Bio'}
-    with open(path_to_file, 'rb') as file:
-        content = file.read()
-        valid_profile_form_data['avatar'] = SimpleUploadedFile(name='profile_pic.jpeg',
-                                    content=content,
-                                    content_type='image/jpeg')
-        return valid_profile_form_data
-
-
-def create_test_profile(user: User) -> User:
-    data = get_profile_form_data()
-    return Profile.objects.create(user=user, full_name=data['full_name'], bio=data['bio'], avatar=data['avatar'])
+from djangogramm.tests import (BaseTestCase, create_test_profile,
+                               create_test_user, get_profile_form_data)
 
 
 class ProfileCreateTestCase(BaseTestCase):
