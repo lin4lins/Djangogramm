@@ -11,18 +11,19 @@ from signup.utils import confirmation_token
 # Create your tests here.
 
 VALID_USER_FORM_DATA = {'email': 'test1@gmail.com',
+                        'username': 'test1',
                         'password1': 'HelloWorld1',
                         'password2': 'HelloWorld1'}
 
 
 def create_test_user() -> User:
-    user = User(email=VALID_USER_FORM_DATA['email'])
+    user = User(email=VALID_USER_FORM_DATA['email'], username=VALID_USER_FORM_DATA['username'], is_active=False)
     user.set_password(VALID_USER_FORM_DATA['password1'])
     user.save()
     return user
 
 
-class TestSignUpView(TestCase):
+class SignUpTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.path = reverse('signup')
@@ -30,62 +31,71 @@ class TestSignUpView(TestCase):
 
     def test_get(self):
         response = self.client.get(self.path)
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'signup/signup.html')
 
     def test_post(self):
         response = self.client.post(self.path, data=VALID_USER_FORM_DATA)
-        User.users.get(email=VALID_USER_FORM_DATA['email'])
+        user = User.objects.get(username=VALID_USER_FORM_DATA['username'])
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Check your email')
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'Confirm your email to sign in Djangogramm!')
 
-    def test_post_email_already_exists(self):
-        create_test_user()
+        user.delete()
+
+    def test_post_username_already_exists(self):
+        user = create_test_user()
         response = self.client.post(self.path, data=VALID_USER_FORM_DATA)
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'errors.html')
-        self.assertContains(response, 'User with this Email already exists')
+        self.assertContains(response, 'A user with that username already exists.')
+
+        user.delete()
 
 
-class TestConfirmationView(TestCase):
-    valid_user_data = {'email': 'test1@gmail.com',
-                       'password1': 'HelloWorld1',
-                       'password2': 'HelloWorld1'}
-
+class ConfirmationTestCase(TestCase):
     def setUp(self):
         self.client = Client()
+        self.user = create_test_user()
+
+    def tearDown(self):
+        self.user.delete()
 
     def test_get(self):
         response = self.client.get(self.__get_confirmation_link())
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'signup/confirmed.html')
 
     def test_invalid_uidb64(self):
         response = self.client.get(self.__get_confirmation_link(is_uidb64_invalid=True))
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'errors.html')
         self.assertContains(response, 'Invalid confirmation link')
 
     def test_user_does_not_exist(self):
         response = self.client.get(self.__get_confirmation_link(is_user_exist=False))
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'errors.html')
         self.assertContains(response, 'Invalid confirmation link')
 
-    def test_confirmation_link_used_twice(self):
-        confirmation_link = self.__get_confirmation_link()
-        self.client.get(confirmation_link)
-        response = self.client.get(confirmation_link)
+    def test_user_is_active(self):
+        self.user.is_active = True
+        self.user.save()
+        response = self.client.get(self.__get_confirmation_link())
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'signup/confirmed_earlier.html')
         self.assertContains(response, 'You have already confirmed your email')
         
-    @staticmethod
-    def __get_confirmation_link(is_uidb64_invalid=False, is_token_invalid=False, is_user_exist=True) -> str:
-        user = create_test_user()
-        user_id = user.pk if is_user_exist else 99
+    def __get_confirmation_link(self, is_uidb64_invalid=False, is_token_invalid=False, is_user_exist=True) -> str:
+        user_id = self.user.pk if is_user_exist else 99
         uidb64 = 'a12*' if is_uidb64_invalid else urlsafe_base64_encode(force_bytes(user_id))
-        token = 'helloworld' if is_token_invalid else confirmation_token.make_token(user)
+        token = 'helloworld' if is_token_invalid else confirmation_token.make_token(self.user)
         return reverse('confirm', kwargs={'uidb64': uidb64, 'token': token})

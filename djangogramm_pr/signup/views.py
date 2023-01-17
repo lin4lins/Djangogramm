@@ -24,7 +24,9 @@ class SignUpView(View):
     def post(self, request):
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
             self.__send_confirmation_email(request, user)
             return HttpResponse("Check your email")
 
@@ -52,7 +54,7 @@ class ConfirmationView(View):
             user_id = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(id=user_id)
 
-            if user and confirmation_token.check_token(user, token):
+            if not user.is_active and confirmation_token.check_token(user, token):
                 user.is_active = True
                 user.save()
                 login(request, user)
