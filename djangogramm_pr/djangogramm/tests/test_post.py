@@ -8,7 +8,8 @@ from djangogramm.tests import ProfileBaseTestCase, create_test_post, get_post_fo
 class PostCreateTestCase(ProfileBaseTestCase):
     def setUp(self):
         super().setUp()
-        self.path = reverse('post-create')
+        self.viewname = 'post-create'
+        self.path = reverse(self.viewname)
 
     def test_get(self):
         response = self.client.get(self.path)
@@ -47,10 +48,11 @@ class PostCreateTestCase(ProfileBaseTestCase):
 class PostDeleteTestCase(ProfileBaseTestCase):
     def setUp(self):
         super().setUp()
+        self.viewname = 'post-delete'
 
     def test_get(self):
         post = create_test_post(self.profile)
-        response = self.client.get(reverse('post-delete', kwargs={'id': post.pk}))
+        response = self.client.get(reverse(self.viewname, kwargs={'id': post.id}))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('profile-me'))
         with self.assertRaises(Post.DoesNotExist):
@@ -61,7 +63,7 @@ class PostDeleteTestCase(ProfileBaseTestCase):
         profile = create_test_profile(user)
         post = create_test_post(profile)
 
-        response = self.client.get(reverse('post-delete', kwargs={'id': post.pk}))
+        response = self.client.get(reverse(self.viewname, kwargs={'id': post.id}))
         self.assertEqual(response.status_code, 404)
 
         post.delete()
@@ -69,5 +71,5 @@ class PostDeleteTestCase(ProfileBaseTestCase):
         user.delete()
 
     def test_get_post_not_exists(self):
-        response = self.client.get(reverse('post-delete', kwargs={'id': 99}))
+        response = self.client.get(reverse(self.viewname, kwargs={'id': 99}))
         self.assertEqual(response.status_code, 404)

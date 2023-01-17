@@ -7,7 +7,8 @@ from djangogramm.tests import (BaseTestCase, create_test_profile,
 class ProfileCreateTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
-        self.path = reverse('profile-create')
+        self.viewname = 'profile-create'
+        self.path = reverse(self.viewname)
 
     def test_get(self):
         response = self.client.get(self.path)
@@ -47,9 +48,13 @@ class ProfileCreateTestCase(BaseTestCase):
 
 
 class ProfileTestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.viewname = 'profile'
+
     def test_get_me(self):
         profile = create_test_profile(self.user)
-        response = self.client.get(reverse('profile', kwargs={'username': profile.user.username}))
+        response = self.client.get(reverse(self.viewname, kwargs={'username': profile.user.username}))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'djangogramm/profile.html')
@@ -59,7 +64,7 @@ class ProfileTestCase(BaseTestCase):
     def test_get_profile(self):
         user = create_test_user(email='test99@gmail.com', username='test99')
         profile = create_test_profile(user)
-        response = self.client.get(reverse('profile', kwargs={'username': profile.user.username}))
+        response = self.client.get(reverse(self.viewname, kwargs={'username': profile.user.username}))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'djangogramm/profile.html')
@@ -68,7 +73,7 @@ class ProfileTestCase(BaseTestCase):
         user.delete()
 
     def test_get_profile_not_exists(self):
-        response = self.client.get(reverse('profile', kwargs={'username': 'test99'}))
+        response = self.client.get(reverse(self.viewname, kwargs={'username': 'test99'}))
 
         self.assertEqual(response.status_code, 404)
 
@@ -76,7 +81,8 @@ class ProfileTestCase(BaseTestCase):
 class ProfileMeTestCase(ProfileBaseTestCase):
     def setUp(self):
         super().setUp()
-        self.path = reverse('profile-me')
+        self.viewname = 'profile-me'
+        self.path = reverse(self.viewname)
 
     def test_get(self):
         response = self.client.get(self.path)
@@ -96,7 +102,8 @@ class ProfileMeTestCase(ProfileBaseTestCase):
 class ProfileUpdateTestCase(ProfileBaseTestCase):
     def setUp(self):
         super().setUp()
-        self.path = reverse('profile-update')
+        self.viewname = 'profile-update'
+        self.path = reverse(self.viewname)
 
     def test_get(self):
         response = self.client.get(self.path)

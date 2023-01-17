@@ -26,7 +26,8 @@ def create_test_user() -> User:
 class SignUpTestCase(TestCase):
     def setUp(self):
         self.client = Client()
-        self.path = reverse('signup')
+        self.viewname = 'signup'
+        self.path = reverse(self.viewname)
         settings.EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
     def test_get(self):
@@ -61,6 +62,7 @@ class ConfirmationTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = create_test_user()
+        self.viewname = 'confirm'
 
     def tearDown(self):
         self.user.delete()
@@ -98,4 +100,4 @@ class ConfirmationTestCase(TestCase):
         user_id = self.user.pk if is_user_exist else 99
         uidb64 = 'a12*' if is_uidb64_invalid else urlsafe_base64_encode(force_bytes(user_id))
         token = 'helloworld' if is_token_invalid else confirmation_token.make_token(self.user)
-        return reverse('confirm', kwargs={'uidb64': uidb64, 'token': token})
+        return reverse(self.viewname, kwargs={'uidb64': uidb64, 'token': token})

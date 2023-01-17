@@ -6,7 +6,8 @@ from djangogramm.tests.test_profile import create_test_profile
 class FeedTestCase(ProfileBaseTestCase):
     def setUp(self):
         super().setUp()
-        self.path = reverse('feed')
+        self.viewname = 'feed'
+        self.path = reverse(self.viewname)
 
     def test_get(self):
         response = self.client.get(self.path)
