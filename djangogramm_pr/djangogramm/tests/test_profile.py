@@ -34,6 +34,14 @@ class ProfileCreateTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'djangogramm/profile_create.html')
 
+    def test_get_profile_already_exists(self):
+        profile = create_test_profile(self.user)
+
+        response = self.client.get(self.path)
+        self.assertEqual(response.status_code, 404)
+
+        profile.delete()
+
     def test_post(self):
         response = self.client.post(self.path, data=get_profile_form_data())
         self.assertEqual(response.status_code, 302)
