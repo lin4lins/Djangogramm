@@ -1,5 +1,5 @@
 from django.urls import reverse
-from djangogramm.models import Post
+from djangogramm.models import (Post, Image, Tag)
 from djangogramm.tests import (ProfileBaseTestCase, create_test_post,
                                create_test_profile, create_test_user,
                                get_post_form_data)
@@ -57,6 +57,8 @@ class PostDeleteTestCase(ProfileBaseTestCase):
         self.assertEqual(response.url, reverse('profile-me'))
         with self.assertRaises(Post.DoesNotExist):
             Post.objects.get(id=post.id)
+        self.assertEqual(Image.objects.filter(post=post).count(), 0)
+        self.assertEqual(Tag.objects.filter(posts=post).count(), 0)
 
     def test_get_wrong_post_author(self):
         user = create_test_user(email='test99@gmail.com', username='test99')
