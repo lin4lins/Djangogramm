@@ -1,7 +1,11 @@
+from django.db import IntegrityError
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
+
+from djangogramm.errors import InvalidFormException
 from djangogramm.forms import ProfileForm
 from djangogramm.models import Post, Profile
 from signup.models import User
@@ -15,16 +19,32 @@ class ProfileCreateView(LoginRequiredMixin, View):
     redirect_url = reverse_lazy('profile-me')
 
     def get(self, request):
-        return render(request, self.template_name, {'form': ProfileForm})
+        try:
+            Profile.objects.get(user=request.user)
+
+        except Profile.DoesNotExist:
+            return render(request, self.template_name, {'form': ProfileForm})
+
+        else:
+            return HttpResponseNotFound("Profile already exists")
 
     def post(self, request):
         form = ProfileForm(request.POST, request.FILES)
+        try:
+            if form.is_valid():
+                profile = form.save(commit=False)
+                profile.user = self.request.user
+                profile.save()
+                return redirect(self.redirect_url)
 
-        if form.is_valid():
-            profile = form.save(commit=False)
-            profile.user = self.request.user
-            profile.save()
-            return redirect(self.redirect_url)
+            raise InvalidFormException()
+
+        except IntegrityError:
+            return HttpResponseNotFound("Profile already exists")
+
+        except InvalidFormException:
+            error_messages = [message for message in form.errors.values()]
+            return render(request, 'errors.html', {'error_messages': error_messages})
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -60,11 +80,17 @@ class ProfileUpdateView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = ProfileForm(request.POST, request.FILES)
+        try:
+            if form.is_valid():
+                profile = get_object_or_404(Profile, user=request.user)
+                profile.full_name = form.cleaned_data['full_name']
+                profile.bio = form.cleaned_data['bio']
+                profile.avatar = form.cleaned_data['avatar']
+                profile.save()
+                return redirect(self.redirect_url)
 
-        if form.is_valid():
-            profile = get_object_or_404(Profile, user=request.user)
-            profile.full_name = form.cleaned_data['full_name']
-            profile.bio = form.cleaned_data['bio']
-            profile.avatar = form.cleaned_data['avatar']
-            profile.save()
-            return redirect(self.redirect_url)
+            raise InvalidFormException()
+
+        except InvalidFormException:
+            error_messages = [message for message in form.errors.values()]
+            return render(request, 'errors.html', {'error_messages': error_messages})
