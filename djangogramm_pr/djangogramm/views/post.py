@@ -13,37 +13,38 @@ class PostCreateView(LoginRequiredMixin, View):
     redirect_url = reverse_lazy('feed')
 
     def get(self, request):
+        get_object_or_404(Profile, user=request.user)
         return render(request, self.template_name, {'post_form': PostForm, 'image_form': ImageForm})
 
     def post(self, request):
         post_form = PostForm(request.POST)
         image_form = ImageForm(request.POST, request.FILES)
 
-        if not post_form.is_valid():
-            raise InvalidFormException()
+        try:
+            if not post_form.is_valid():
+                raise InvalidFormException(form=post_form)
 
-        if not image_form.is_valid():
-            raise InvalidFormException()
+            if not image_form.is_valid():
+                raise InvalidFormException(form=image_form)
 
-        post = post_form.save(commit=False)
-        post.author = get_object_or_404(Profile, user=request.user)
-        post.save()
+            post = post_form.save(commit=False)
+            post.author = get_object_or_404(Profile, user=request.user)
+            post.save()
 
-        self.__create_images(post, request.FILES.getlist('original'))
+            for position, image in enumerate(request.FILES.getlist('original')):
+                Image(post=post, original=image, preview=image, position=position).save()
 
-        return redirect(self.redirect_url)
+            return redirect(self.redirect_url)
 
-    @staticmethod
-    def __create_images(post: Post, image_list: list) -> None:
-        for position, image in enumerate(image_list):
-            Image(post=post, original=image, preview=image, position=position).save()
-
+        except InvalidFormException as exc:
+            error_messages = [message for message in exc.form.errors.values()]
+            return render(request, 'errors.html', {'error_messages': error_messages})
 
 class PostDeleteView(LoginRequiredMixin, View):
     login_url = '/auth/login'
     redirect_url = reverse_lazy('profile-me')
 
-    def get(self, request, id):
+    def get(self, request, id: int):
         profile = get_object_or_404(Profile, user=request.user)
         get_object_or_404(Post, id=id, author=profile).delete()
         return redirect(self.redirect_url)
