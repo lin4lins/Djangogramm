@@ -66,5 +66,5 @@ class Tag(models.Model):
 
 
 class Like(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = 'likes')
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name = 'likes')
+    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name = 'likes')
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name = 'likes')

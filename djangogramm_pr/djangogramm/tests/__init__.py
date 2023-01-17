@@ -4,7 +4,7 @@ from pathlib import Path
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TransactionTestCase, override_settings
-from djangogramm.models import Profile, Post, Image
+from djangogramm.models import Image, Like, Post, Profile
 from signup.models import User
 
 VALID_USER_FORM_DATA = {'email': 'test2@gmail.com',
@@ -49,6 +49,10 @@ def create_test_post(profile: Profile) -> Post:
         Image(post=post, original=image, preview=image, position=position).save()
 
     return post
+
+
+def create_test_like(profile: Profile, post: Post) -> Like:
+    return Like.objects.create(profile=profile, post=post)
 
 @override_settings(MEDIA_ROOT=Path(__file__).parent / 'test_storage')
 class BaseTestCase(TransactionTestCase):
