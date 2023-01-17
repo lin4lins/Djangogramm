@@ -1,3 +1,4 @@
+import os
 import shutil
 from pathlib import Path
 
@@ -51,6 +52,11 @@ def create_test_post(profile: Profile) -> Post:
 
 @override_settings(MEDIA_ROOT=Path(__file__).parent / 'test_storage')
 class BaseTestCase(TransactionTestCase):
+    storage = Path(__file__).parent / 'test_storage'
+    @classmethod
+    def setUpClass(cls):
+        os.mkdir(cls.storage)
+
     @classmethod
     def tearDownClass(cls):
         storage = Path(__file__).parent / 'test_storage'
