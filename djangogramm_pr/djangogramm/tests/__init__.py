@@ -59,8 +59,7 @@ class BaseTestCase(TransactionTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        storage = Path(__file__).parent / 'test_storage'
-        shutil.rmtree(storage)
+        shutil.rmtree(cls.storage)
 
     def setUp(self):
         self.client = Client()

@@ -97,7 +97,7 @@ class ConfirmationTestCase(TestCase):
         self.assertContains(response, 'You have already confirmed your email')
         
     def __get_confirmation_link(self, is_uidb64_invalid=False, is_token_invalid=False, is_user_exist=True) -> str:
-        user_id = self.user.pk if is_user_exist else 99
+        user_id = self.user.id if is_user_exist else 99
         uidb64 = 'a12*' if is_uidb64_invalid else urlsafe_base64_encode(force_bytes(user_id))
         token = 'helloworld' if is_token_invalid else confirmation_token.make_token(self.user)
         return reverse(self.viewname, kwargs={'uidb64': uidb64, 'token': token})

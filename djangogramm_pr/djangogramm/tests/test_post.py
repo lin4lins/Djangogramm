@@ -1,8 +1,8 @@
 from django.urls import reverse
-
 from djangogramm.models import Post
-from djangogramm.tests import ProfileBaseTestCase, create_test_post, get_post_form_data, BaseTestCase, \
-    create_test_profile, create_test_user
+from djangogramm.tests import (ProfileBaseTestCase, create_test_post,
+                               create_test_profile, create_test_user,
+                               get_post_form_data)
 
 
 class PostCreateTestCase(ProfileBaseTestCase):
@@ -31,8 +31,8 @@ class PostCreateTestCase(ProfileBaseTestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('feed'))
-        self.assertEqual(len(post.media.all()), 3)
-        self.assertEqual(len(post.tags.all()), 1)
+        self.assertEqual(post.media.all().count(), 3)
+        self.assertEqual(post.tags.all().count(), 1)
 
         post.delete()
 
@@ -56,7 +56,7 @@ class PostDeleteTestCase(ProfileBaseTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse('profile-me'))
         with self.assertRaises(Post.DoesNotExist):
-            Post.objects.get(id=post.pk)
+            Post.objects.get(id=post.id)
 
     def test_get_wrong_post_author(self):
         user = create_test_user(email='test99@gmail.com', username='test99')

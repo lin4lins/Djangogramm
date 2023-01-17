@@ -1,6 +1,6 @@
 from django.db import IntegrityError
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseNotFound
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
@@ -26,7 +26,7 @@ class ProfileCreateView(LoginRequiredMixin, View):
             return render(request, self.template_name, {'form': ProfileForm})
 
         else:
-            return HttpResponseNotFound("Profile already exists")
+            return HttpResponse(status=404)
 
     def post(self, request):
         form = ProfileForm(request.POST, request.FILES)
@@ -40,7 +40,7 @@ class ProfileCreateView(LoginRequiredMixin, View):
             raise InvalidFormException()
 
         except IntegrityError:
-            return HttpResponseNotFound("Profile already exists")
+            return HttpResponse(status=404)
 
         except InvalidFormException:
             error_messages = [message for message in form.errors.values()]

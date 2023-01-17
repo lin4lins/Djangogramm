@@ -1,7 +1,8 @@
 from django.urls import reverse
 from djangogramm.models import Profile
-from djangogramm.tests import (BaseTestCase, create_test_profile,
-                               create_test_user, get_profile_form_data, ProfileBaseTestCase)
+from djangogramm.tests import (BaseTestCase, ProfileBaseTestCase,
+                               create_test_profile, create_test_user,
+                               get_profile_form_data)
 
 
 class ProfileCreateTestCase(BaseTestCase):
