@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -50,6 +51,11 @@ def create_test_post(profile: Profile) -> Post:
 
 @override_settings(MEDIA_ROOT=Path(__file__).parent / 'test_storage')
 class BaseTestCase(TransactionTestCase):
+    @classmethod
+    def tearDownClass(cls):
+        storage = Path(__file__).parent / 'test_storage'
+        shutil.rmtree(storage)
+
     def setUp(self):
         self.client = Client()
         self.user = create_test_user()
