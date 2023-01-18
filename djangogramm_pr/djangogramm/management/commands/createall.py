@@ -29,14 +29,24 @@ faker = Faker('en_US')
 class Command(BaseCommand):
     help = 'Populates database with fake profiles, posts, images, likes and tags'
 
+    def add_arguments(self, parser):
+        parser.add_argument('--profiles', '-pr', type=int, help='Must be equal to users count')
+        parser.add_argument('--posts', '-po', type=int, help='Max posts per profile')
+        parser.add_argument('--images', '-i', type=int, help='Max images per post')
+
+
     def handle(self, *args, **options):
-        self.__create_fake_profiles()
-        self.__create_fake_posts()
-        self.__create_fake_images()
+        if options['profiles']:
+            if options['profiles'] > User.objects.all().count():
+                raise CommandError('Profiles count can not be greater than users count')
+
+        self.__create_fake_profiles(options['profiles']) if  options['profiles'] else self.__create_fake_profiles()
+        self.__create_fake_posts(options['posts']) if  options['posts'] else self.__create_fake_posts()
+        self.__create_fake_images(options['images']) if options['images'] else self.__create_fake_images()
         self.__create_fake_likes()
 
-    def __create_fake_profiles(self):
-        for user_id in range(1, PROFILES_COUNT+1):
+    def __create_fake_profiles(self, profiles_count=PROFILES_COUNT):
+        for user_id in range(1, profiles_count+1):
             profile_data = faker.simple_profile()
             bio = faker.text(max_nb_chars=MAX_CHARS_FOR_BIO)
             user = User.objects.get(id=user_id)
@@ -46,9 +56,9 @@ class Command(BaseCommand):
 
         self.stdout.write("Profiles created successfully")
 
-    def __create_fake_posts(self):
+    def __create_fake_posts(self, max_posts=MAX_POSTS_PER_PROFILE):
         for profile in Profile.objects.all():
-            for _ in range(randint(MIN_POSTS_PER_PROFILE, MAX_POSTS_PER_PROFILE)):
+            for _ in range(randint(MIN_POSTS_PER_PROFILE, max_posts)):
                 caption_without_hashtags = faker.text(max_nb_chars=MAX_CHARS_FOR_CAPTION)
                 caption_with_hashtags = self.__add_tags_to_caption(caption_without_hashtags)
                 post = Post(author=profile, caption=caption_with_hashtags)
@@ -58,9 +68,9 @@ class Command(BaseCommand):
 
         self.stdout.write("Posts created successfully")
 
-    def __create_fake_images(self):
+    def __create_fake_images(self, max_images=MAX_IMAGES_PER_POST):
         for post in Post.objects.all():
-            for position in range(randint(MIN_IMAGES_PER_POST, MAX_IMAGES_PER_POST)):
+            for position in range(randint(MIN_IMAGES_PER_POST, max_images)):
                 original_image_path = f'posts/originals/{post.id}-{position}.jpg'
                 original_image = self.__download_image(original_image_path)
 
