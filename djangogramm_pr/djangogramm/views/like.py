@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 from djangogramm.models import Like, Post, Profile
@@ -25,9 +25,8 @@ class DeleteLikeView(LoginRequiredMixin, View):
 
     def post(self, request, post_id):
         try:
-            disliked_post = get_object_or_404(Post, id=post_id)
-            disliked_by = get_object_or_404(Profile, user_id=request.user.id)
-            get_object_or_404(Like, post=disliked_post, profile=disliked_by).delete()
+            disliked_post = Post.obejcts.get(id=post_id)
+            get_object_or_404(Like, post=disliked_post, profile=self.request.user.profile).delete()
             return HttpResponse(status=204)
 
         except IntegrityError:

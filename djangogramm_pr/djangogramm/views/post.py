@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from djangogramm.errors import InvalidFormException
 from djangogramm.forms import ImageForm, PostForm
-from djangogramm.models import Image, Post, Profile
+from djangogramm.models import Image, Post
 
 
 class PostCreateView(LoginRequiredMixin, View):
@@ -13,7 +13,6 @@ class PostCreateView(LoginRequiredMixin, View):
     redirect_url = reverse_lazy('feed')
 
     def get(self, request):
-        get_object_or_404(Profile, user=request.user)
         return render(request, self.template_name, {'post_form': PostForm, 'image_form': ImageForm})
 
     def post(self, request):
@@ -28,7 +27,7 @@ class PostCreateView(LoginRequiredMixin, View):
                 raise InvalidFormException(form=image_form)
 
             post = post_form.save(commit=False)
-            post.author = get_object_or_404(Profile, user=request.user)
+            post.author = request.user.profile
             post.save()
 
             for position, image in enumerate(request.FILES.getlist('original')):
@@ -45,6 +44,5 @@ class PostDeleteView(LoginRequiredMixin, View):
     redirect_url = reverse_lazy('profile-me')
 
     def get(self, request, id: int):
-        profile = get_object_or_404(Profile, user=request.user)
-        get_object_or_404(Post, id=id, author=profile).delete()
+        get_object_or_404(Post, id=id, author=request.user.profile).delete()
         return redirect(self.redirect_url)

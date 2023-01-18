@@ -19,14 +19,7 @@ class ProfileCreateView(LoginRequiredMixin, View):
     redirect_url = reverse_lazy('profile-me')
 
     def get(self, request):
-        try:
-            Profile.objects.get(user=request.user)
-
-        except Profile.DoesNotExist:
-            return render(request, self.template_name, {'form': ProfileForm})
-
-        else:
-            return HttpResponse(status=404)
+        return render(request, self.template_name, {'form': ProfileForm})
 
     def post(self, request):
         form = ProfileForm(request.POST, request.FILES)
@@ -40,7 +33,7 @@ class ProfileCreateView(LoginRequiredMixin, View):
             raise InvalidFormException()
 
         except IntegrityError:
-            return HttpResponse(status=404)
+            return HttpResponse(status=405)
 
         except InvalidFormException:
             error_messages = [message for message in form.errors.values()]
@@ -52,7 +45,7 @@ class ProfileView(LoginRequiredMixin, View):
     template_name = 'djangogramm/profile.html'
 
     def get(self, request, username):
-        user = get_object_or_404(User, username=username)
+        user = User.objects.get(username=username)
         profile =  get_object_or_404(Profile, user=user)
         posts = Post.objects.filter(author=profile).order_by('-created_at')
         return render(request, self.template_name, {'profile': profile, 'posts': posts})
