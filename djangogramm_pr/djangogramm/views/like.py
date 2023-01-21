@@ -25,7 +25,7 @@ class DeleteLikeView(LoginRequiredMixin, View):
 
     def post(self, request, post_id):
         try:
-            disliked_post = Post.obejcts.get(id=post_id)
+            disliked_post = Post.objects.get(id=post_id)
             get_object_or_404(Like, post=disliked_post, profile=self.request.user.profile).delete()
             return HttpResponse(status=204)
 

@@ -50,6 +50,7 @@ class ProfileView(LoginRequiredMixin, View):
         posts = Post.objects.filter(author=profile).order_by('-created_at')
         return render(request, self.template_name, {'profile': profile, 'posts': posts})
 
+
 class ProfileMeView(LoginRequiredMixin, View):
     login_url = '/auth/login'
     template_name = 'djangogramm/profile-me.html'
@@ -58,6 +59,7 @@ class ProfileMeView(LoginRequiredMixin, View):
         profile = get_object_or_404(Profile, user=request.user)
         posts = Post.objects.filter(author=profile).order_by('-created_at')
         return render(request, self.template_name, {'profile': profile, 'posts': posts})
+
 
 class ProfileUpdateView(LoginRequiredMixin, View):
     login_url = '/auth/login'
