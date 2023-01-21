@@ -1,0 +1,19 @@
+branch-defaults:
+  dev:
+    environment: newnew4
+environment-defaults:
+  newnew3:
+    branch: null
+    repository: null
+global:
+  application_name: djangogramm
+  default_ec2_keyname: aws-eb
+  default_platform: Python 3.8 running on 64bit Amazon Linux 2
+  default_region: eu-central-1
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: null
+  sc: git
+  workspace_type: Application
