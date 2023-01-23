@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, render
 from django.views import View
-from djangogramm.models import Tag, Profile
+from djangogramm.models import Tag
 
 
 class SearchTagView(LoginRequiredMixin, View):

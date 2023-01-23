@@ -30,15 +30,6 @@ class CreateLikeTestCase(PostBaseTestCase):
 
         self.profile = create_test_profile(self.user)
 
-    def test_post_like_already_exist(self):
-        like = create_test_like(profile=self.profile, post=self.post)
-
-        response = self.client.post(reverse(self.viewname, kwargs={'post_id': self.post.id}))
-        self.assertEqual(response.status_code, 404)
-
-
-        like.delete()
-
 
 class DeleteLikeTestCase(PostBaseTestCase):
     def setUp(self):

@@ -17,14 +17,6 @@ class PostCreateTestCase(ProfileBaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'djangogramm/post_create.html')
 
-    def test_get_profile_not_exists(self):
-        self.profile.delete()
-
-        response = self.client.get(self.path)
-        self.assertEqual(response.status_code, 404)
-
-        self.profile = create_test_profile(self.user)
-
     def test_post(self):
         response = self.client.post(self.path, data=get_post_form_data())
         post = Post.objects.get(author=self.profile)

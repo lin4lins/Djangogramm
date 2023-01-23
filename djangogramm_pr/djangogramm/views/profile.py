@@ -45,7 +45,7 @@ class ProfileView(LoginRequiredMixin, View):
     template_name = 'djangogramm/profile.html'
 
     def get(self, request, username):
-        user = User.objects.get(username=username)
+        user = get_object_or_404(User, username=username)
         profile =  get_object_or_404(Profile, user=user)
         posts = Post.objects.filter(author=profile).order_by('-created_at')
         return render(request, self.template_name, {'profile': profile, 'posts': posts})

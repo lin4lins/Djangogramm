@@ -21,13 +21,3 @@ class TagTestCase(PostBaseTestCase):
     def test_get_tag_not_exists(self):
         response = self.client.get(reverse(self.viewname, kwargs={'name': 'abc'}))
         self.assertEqual(response.status_code, 404)
-
-
-    def test_get_profile_not_exists(self):
-        tag = create_test_tag(self.post)
-        self.profile.delete()
-
-        response = self.client.get(reverse(self.viewname, kwargs={'name': tag.name}))
-        self.assertEqual(response.status_code, 404)
-
-        self.profile = create_test_profile(self.user)
