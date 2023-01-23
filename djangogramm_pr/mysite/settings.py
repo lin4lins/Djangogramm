@@ -29,8 +29,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['172.31.2.155', 'newnew8.eu-central-1.elasticbeanstalk.com']
-
+ALLOWED_HOSTS = []
 
 # Application definition
 
