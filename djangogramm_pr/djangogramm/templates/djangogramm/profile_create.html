@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content%}
+<h1>Profile</h1>
+    <form method="POST" class="form-group" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <p>
+                {{ field.label_tag }}<br>
+                {{ field }}
+            </p>
+        {% endfor %}
+        <button type="submit" value="Submit" class="btn btn-success">Submit</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content%}
+    <h1>Searching results for tag {{ tag.name }}</h1>
+    <h1>Found {{ tag.posts.all|length }} matches</h1>
+    {% for post in tag.posts.all %}
+        <p>{{post.author.user.username}}</p>
+        <img src="/media/{{post.media.all.0.preview}}"/>
+        <p>{{post.likes.all|length }} likes</p>
+    {% endfor %}
+
+{% endblock %}

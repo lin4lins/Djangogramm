@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content%}
+    <form method="POST">
+        <h1>Sign up</h1>
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group mb-3">
+            <label>{{ field.label_tag }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+        </div>
+        {% endfor %}
+            <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}
