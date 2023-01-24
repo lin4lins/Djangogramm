@@ -126,3 +126,4 @@ dmypy.json
 /djangogramm_pr/media
 
 .env
+prod.env
