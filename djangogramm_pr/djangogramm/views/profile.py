@@ -46,6 +46,9 @@ class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request, username):
         user = get_object_or_404(User, username=username)
+        if user == request.user:
+            return redirect(reverse_lazy('profile-me'))
+
         profile =  get_object_or_404(Profile, user=user)
         posts = Post.objects.filter(author=profile).order_by('-created_at')
         return render(request, self.template_name, {'profile': profile, 'posts': posts})
@@ -58,7 +61,7 @@ class ProfileMeView(LoginRequiredMixin, View):
     def get(self, request):
         profile = get_object_or_404(Profile, user=request.user)
         posts = Post.objects.filter(author=profile).order_by('-created_at')
-        return render(request, self.template_name, {'profile': profile, 'posts': posts})
+        return render(request, self.template_name, {'posts': posts})
 
 
 class ProfileUpdateView(LoginRequiredMixin, View):

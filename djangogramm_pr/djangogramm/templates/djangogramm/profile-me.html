@@ -4,7 +4,7 @@
 <div class="container-lg mt-4">
   <div class="row justify-content-md-center mt-5">
     <div class="col col-2">
-      <img src="/media/{{profile.avatar}}" class="img-thumbnail rounded-circle" style="width:150px;height:150px;object-fit:cover;">
+      <img src="/media/{{user.profile.avatar}}" class="img-thumbnail rounded-circle" style="width:150px;height:150px;object-fit:cover;">
     </div>
     <div class="col col-9 ml-3">
       <div class="row">
@@ -12,7 +12,7 @@
           <h5>{{user.username}}</h5>
         </div>
         <div class="col col-4">
-          <button type="button" class="btn btn-outline-dark" onClick="location.href='/profile/update'">Edit profile</button>
+          <button type="button" class="btn btn-outline-dark" onClick="location.href='/profile/me/update'">Edit profile</button>
         </div>
       </div>
       <div class="row mt-3">
@@ -20,16 +20,20 @@
           <p><strong>{{ posts|length }}</strong> publications</p>
         </div>
         <div class="col">
-          <p><strong>20</strong> followers</p>
+          <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#followersModal">
+            <p><strong>{{user.profile.followers.all|length}}</strong> followers</p>
+          </a>
         </div>
         <div class="col">
-          <p><strong>20</strong> subscriptions</p>
+          <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#followingModal">
+            <p><strong id="following_count">{{user.profile.following.all|length}}</strong> following</p>
+          </a>
         </div>
       </div>
       <div class="row mt-3">
         <div class="col col-8">
-          <h6>{{profile.full_name}}</h6>
-          <p>{{profile.bio}}</p>
+          <h6>{{user.profile.full_name}}</h6>
+          <p>{{user.profile.bio}}</p>
         </div>
       </div>
     </div>
@@ -95,7 +99,7 @@
             <div class="col border">
               <div class="row mt-3 pb-3 border-bottom">
                 <div class="col-2">
-                  <img src="/media/{{profile.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                  <img src="/media/{{user.profile.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
                 </div>
                 <div class="col">
                   <h5>{{user.username}}</h5>
@@ -144,4 +148,81 @@
 </div>
 {% endfor %}
 
+
+<div class="modal fade" id="followersModal" tabindex="-1" aria-labelledby="followersModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <div class="container mt-3">
+          <div class="row text-center">
+            <h6>Followers</h6>
+            <hr class="style1">
+          </div>
+          {% for follower in user.profile.followers.all %}
+            <div class="row align-items-center pb-2">
+              <div class="col-3 text-center">
+                <a class="text-decoration-none text-dark" href="/profile/{{follower.who_follows.user.username}}">
+                  <img src="/media/{{follower.who_follows.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                </a>
+              </div>
+              <div class="col-6">
+                <a class="text-decoration-none text-dark" href="/profile/{{follower.who_follows.user.username}}">
+                  <h6>{{follower.who_follows.user.username}}</h6>
+                </a>
+              </div>
+              <div class="col-3">
+                {% load define_follower %}
+                  {% is_followed_by_current_user user follower.who_follows as is_followed %}
+                    {% if is_followed %}
+                      <button id="unfollow-modal-button-{{follower.who_follows.user.username}}" type="button" class="btn btn-outline-dark" onClick="unfollowModalMe('{{follower.who_follows.user.username}}', '{{csrf_token}}')">Unfollow</button>
+                    {% else %}
+                      <button id="follow-modal-button-{{follower.who_follows.user.username}}" type="button" class="btn btn-outline-dark" onClick="followModalMe('{{follower.who_follows.user.username}}', '{{csrf_token}}')">Follow</button>
+                    {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="followingModal" tabindex="-1" aria-labelledby="followingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <div class="container mt-3">
+          <div class="row text-center">
+            <h6>Following</h6>
+            <hr class="style1">
+          </div>
+          {% for following in user.profile.following.all %}
+            <div class="row align-items-center pb-2">
+              <div class="col-3 text-center">
+                <a class="text-decoration-none text-dark" href="/profile/{{following.who_is_followed.user.username}}">
+                  <img src="/media/{{following.who_is_followed.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                </a>
+              </div>
+              <div class="col-6">
+                <a class="text-decoration-none text-dark" href="/profile/{{following.who_is_followed.user.username}}">
+                  <h6>{{following.who_is_followed.user.username}}</h6>
+                </a>
+              </div>
+              <div class="col-3">
+                {% load define_follower %}
+                  {% is_followed_by_current_user user following.who_is_followed as is_followed %}
+                    {% if is_followed %}
+                      <button id="unfollow-modal-button-{{following.who_is_followed.user.username}}" type="button" class="btn btn-outline-dark" onClick="unfollowModalMe('{{following.who_is_followed.user.username}}', '{{csrf_token}}')">Unfollow</button>
+                    {% else %}
+                      <button id="follow-modal-button-{{following.who_is_followed.user.username}}" type="button" class="btn btn-outline-dark" onClick="followModalMe('{{following.who_is_followed.user.username}}', '{{csrf_token}}')">Follow</button>
+                    {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

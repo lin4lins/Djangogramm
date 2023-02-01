@@ -68,3 +68,8 @@ class Tag(models.Model):
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = 'likes')
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name = 'likes')
+
+
+class Follower(models.Model):
+    who_follows = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name = 'following') # подписчик
+    who_is_followed = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='followers') # тот, на кого подписались

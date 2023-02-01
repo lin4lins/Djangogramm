@@ -1,6 +1,7 @@
 from django.urls import path
 
 from djangogramm.views.feed import FeedView
+from djangogramm.views.follower import CreateFollowView, DeleteFollowView
 from djangogramm.views.like import CreateLikeView, DeleteLikeView
 from djangogramm.views.post import PostCreateView, PostDeleteView
 from djangogramm.views.profile import (ProfileCreateView, ProfileMeView,
@@ -16,6 +17,8 @@ urlpatterns = [
     path('post/<id>/delete', PostDeleteView.as_view(), name='post-delete'),
     path('like/<int:post_id>/create', CreateLikeView.as_view(), name='like-create'),
     path('like/<int:post_id>/delete', DeleteLikeView.as_view(), name='like-delete'),
+    path('follow/<username>/create', CreateFollowView.as_view(), name='follow-create'),
+    path('follow/<username>/delete', DeleteFollowView.as_view(), name='follow-delete'),
     path('search/tag/<name>', SearchTagView.as_view(), name='tag'),
     path('', FeedView.as_view(), name='feed'),
 ]
