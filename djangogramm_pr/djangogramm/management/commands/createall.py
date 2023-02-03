@@ -1,15 +1,15 @@
 from datetime import datetime
-from random import choice, randint, sample
+from random import choice, randint, sample, shuffle
 
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
 import requests
 from PIL import Image as PIL_Image
 
-from djangogramm.models import Profile, Post, Image, Like
+from djangogramm.models import Profile, Post, Image, Like, Follower
 from signup.models import User
 
-PROFILES_COUNT = 2
+PROFILES_COUNT = 10
 MIN_POSTS_PER_PROFILE = 0
 MAX_POSTS_PER_PROFILE = 10
 MAX_CHARS_FOR_CAPTION = 255
@@ -21,7 +21,7 @@ MAX_TAGS_PER_POST = 3
 MIN_IMAGES_PER_POST = 1
 MAX_IMAGES_PER_POST = 4
 
-IMG_SIZES_IN_PX = list(range(300, 1301, 100))
+IMG_SIZES_IN_PX = list(range(300, 1001, 100))
 
 faker = Faker('en_US')
 
@@ -44,6 +44,7 @@ class Command(BaseCommand):
         self.__create_fake_posts(options['posts']) if  options['posts'] else self.__create_fake_posts()
         self.__create_fake_images(options['images']) if options['images'] else self.__create_fake_images()
         self.__create_fake_likes()
+        self.__create_fake_followers()
 
     def __create_fake_profiles(self, profiles_count=PROFILES_COUNT):
         for user_id in range(1, profiles_count+1):
@@ -90,10 +91,24 @@ class Command(BaseCommand):
 
         self.stdout.write("Likes created successfully")
 
+    def __create_fake_followers(self):
+        followers = list(Profile.objects.all())
+        following = followers.copy()
+        shuffle(followers)
+        shuffle(following)
+        for follower_profile in followers:
+            for following_profile in following:
+                if len(Follower.objects.filter(who_follows=follower_profile, who_is_followed=following_profile)) != 0:
+                    continue
+                if faker.boolean():
+                    Follower.objects.create(who_follows=follower_profile, who_is_followed=following_profile)
+
+        self.stdout.write("Followers created successfully")
+
     @staticmethod
     def __download_image(image_path: str):
-        image_width_px, image_height_px = choice(IMG_SIZES_IN_PX), choice(IMG_SIZES_IN_PX)
-        response = requests.get(f'https://picsum.photos/{image_width_px}/{image_height_px}', stream=True)
+        image_size_px = choice(IMG_SIZES_IN_PX)
+        response = requests.get(f'https://picsum.photos/{image_size_px}/{image_size_px}', stream=True)
         if response.status_code != 200:
             raise CommandError("While profile image downloading an error occurred")
 
