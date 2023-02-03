@@ -56,7 +56,7 @@ class Image(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         image_to_compress = PIL_Image.open(self.preview.path)
-        image_to_compress.crop().save(self.preview.path, quality=10, optimize=False)
+        image_to_compress.crop().save(self.preview.path, quality=60, optimize=False)
         return self
 
 
