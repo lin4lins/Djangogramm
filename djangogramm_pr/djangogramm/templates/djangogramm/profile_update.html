@@ -1,15 +1,59 @@
 {% extends "base.html" %}
 
 {% block content%}
-<h1>Profile</h1>
-    <form method="POST" class="form-group" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% for field in form %}
-            <p>
-                {{ field.label_tag }}<br>
-                {{ field }}
-            </p>
-        {% endfor %}
-        <button type="submit" value="Submit" class="btn btn-success">Submit</button>
-    </form>
+<div class="container">
+  <div class="row justify-content-center align-items-center" style="height:90vh">
+    <div class="col-12 col-xl-6 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          {% load widget_tweaks %}
+          <form method="POST" class="form-group" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            <div class="row align-items-center">
+              <div class="col"></div>
+              <div class="col-5 col-xl-9 col-lg-9 col-md-9 text-center">
+                <h6 class="fw-normal">Update profile</h6>
+              </div>
+              <div class="col pb-1">
+                <button type="submit" value="Submit" class="btn btn-primary">Update</button>
+              </div>
+              <hr class="style1">
+            </div>
+            <div class="row">
+              <div class="col">
+              {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                  {% for error in form.non_field_errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+                {% endif %}
+                {% for field in form.visible_fields %}
+                  <div class="row">
+                    <div class="form-group">
+                      {% if form.is_bound %}
+                        {% if field.errors %}
+                          {% render_field field class="form-control is-invalid fw-normal mt-3" placeholder=field.name %}
+                          {% for error in field.errors %}
+                            <div class="invalid-feedback">
+                              {{ error }}
+                            </div>
+                          {% endfor %}
+                        {% else %}
+                          {% render_field field class="form-control is-valid fw-normal mt-3" placeholder=field.name %}
+                        {% endif %}
+                      {% else %}
+                        {% render_field field class="form-control fw-normal mt-3" placeholder=field.name %}
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

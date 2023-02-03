@@ -15,24 +15,35 @@
                 </div>
                 <div class="row justify-content-center mt-5">
                   <div class="col-12 col-md-10 col-lg-10 col-xl-10 text-center">
-                    <form method="post" action="/auth/login/" class="form-group">
+                   {% load widget_tweaks %}
+                    <form method='post' action='/auth/login/' class="form-group" novalidate>
                       {% csrf_token %}
-                      <div class="mb-3">
-                        <input type="text" class="form-control fw-normal" id="username-input" name="username" placeholder="username">
-                      </div>
-                      <div class="mb-3">
-                        <input type="password" class="form-control fw-normal" id="password-input" name="password" placeholder="password">
-                      </div>
-                      {% if form.errors %}
-                        {% for field in form %}
-                          {% for error in field.errors %}
-                            <div class="alert alert-danger fw-light">
-                              <strong>{{ error|escape }}</strong>
-                            </div>
+                      {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                          {% for error in form.non_field_errors %}
+                            {{ error }}
                           {% endfor %}
-                        {% endfor %}
+                        </div>
                       {% endif %}
-                      <button type="submit" class="btn btn-primary fw-normal mt-1">Log in</button>
+                      {% for field in form.visible_fields %}
+                        <div class="form-group">
+                          {% if form.is_bound %}
+                            {% if field.errors %}
+                              {% render_field field class="form-control is-invalid fw-normal mt-3" placeholder=field.name %}
+                              {% for error in field.errors %}
+                                <div class="invalid-feedback">
+                                  {{ error }}
+                                </div>
+                              {% endfor %}
+                            {% else %}
+                              {% render_field field class="form-control is-valid fw-normal mt-3" placeholder=field.name %}
+                            {% endif %}
+                          {% else %}
+                            {% render_field field class="form-control fw-normal mt-3" placeholder=field.name %}
+                          {% endif %}
+                        </div>
+                      {% endfor %}
+                      <button type="submit" class="btn btn-primary mt-3">Log in</button>
                     </form>
                   </div>
                 </div>
