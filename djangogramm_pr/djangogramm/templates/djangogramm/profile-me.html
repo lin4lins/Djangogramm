@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="container-lg mt-4">
-  <div class="row justify-content-md-center mt-5">
+  <div class="row justify-content-center mt-5">
     <div class="col col-2">
       <img src="/media/{{user.profile.avatar}}" class="img-thumbnail rounded-circle" style="width:150px;height:150px;object-fit:cover;">
     </div>
@@ -110,7 +110,7 @@
                 {% get_caption_with_tags post.caption as caption %}
                 <p><strong>{{user.username}}</strong> {{caption}}</p>
               </div>
-              <div class="row border-top">
+              <div class="row border-top pt-2">
                 <div class="col-1">
                   {% load define_like %}
                   {% get_like post.likes.all user as like %}

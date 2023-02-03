@@ -1,60 +1,59 @@
 <!doctype html>
 <html lang="en">
   <head>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">  </head>
+    <meta content='maximum-scale=1.0, initial-scale=1.0, width=device-width shrink-to-fit=no' name='viewport'>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  </head>
   <body class="bg-light text-dark">
-    <div class="d-flex">
-      <div class="d-flex flex-column flex-shrink-0 p-3 bg-white border-end" style="width: 335px; min-height: 100vh">
-        <a class="navbar-brand mt-5 mb-4" href="/">
-          <svg class="bi me-2" width="16" height="16"></svg>
-          <img src="/static/logo.png" height="30"/>
-        </a>
-        <svg class="bi me-2" width="16" height="16"></svg>
-        <ul class="nav nav-pills flex-column mb-auto">
-          <li class="nav-item">
-            <a href="/" class="nav-link link-dark">
-              <svg class="bi me-2" width="0" height="16"></svg>
-              <img src="/static/search.png" width="25" height="25"/>
-              <svg class="bi me-2" width="5" height="16"></svg>
-                Search
+    <div class="container-fluid">
+      <div class="row flex-nowrap" style="min-height:100vh">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-white border-end">
+          <div class="d-flex flex-column align-items-center align-items-sm-start px-4 pt-5">
+            <a href="/" class="d-flex align-items-center pb-3 mb-2 me-md-auto">
+              <img src="/static/logo.png" class="ms-1 d-none d-sm-inline" style="height:3.5vh"/>
             </a>
-          </li>
-          <li class="nav-item">
-            <a href="/" class="nav-link link-dark">
-              <svg class="bi me-2" width="0" height="16"></svg>
-              <img src="/static/home.png" width="25" height="25"/>
-              <svg class="bi me-2" width="5" height="16"></svg>
-              Feed
-            </a>
-          </li>
-          <li>
-            <a href="/post/create" class="nav-link link-dark">
-              <svg class="bi me-2" width="0" height="16"></svg>
-              <img src="/static/create.png" width="25" height="25"/>
-              <svg class="bi me-2" width="5" height="16"></svg>
-              Create
-            </a>
-          </li>
-          <li>
-            <div class="dropdown">
-              <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <svg class="bi me-2" width="20" height="30"></svg>
-                <img src="/static/profile.png" width="25" height="25"/>
-                <svg class="bi me-2" width="12" height="16"></svg>
-                Profile
-              </a>
-              <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
-                <li><a class="dropdown-item" href="/profile/me">Show</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="/auth/logout">Log out</a></li>
-              </ul>
-            </div>
-          </li>
-        </ul>
+            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+              <li class="nav-item mt-1">
+                <a href="/" class="nav-link align-middle px-0 text-dark text-decoration-none">
+                  <img src="/static/home.png" class="img-fluid" style="height:3vh"/>
+                  <p class="ms-2 d-none d-sm-inline ">Feed</p>
+                </a>
+              </li>
+              <li class="nav-item mt-1">
+                <a href="/post/create" class="nav-link align-middle px-0 text-dark text-decoration-none">
+                  <img src="/static/create.png" class="img-fluid" style="height:3vh"/>
+                  <p class="ms-2 d-none d-sm-inline">Create</p>
+                </a>
+              </li>
+              <li class="nav-item mt-1">
+                <div class="dropdown">
+                  <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="/media/{{user.profile.avatar}}" alt="avatar" class="img-fluid rounded-circle" style="height:25px;width:25px">
+                    <span class="d-none d-sm-inline mx-2 fw-bolder">@{{user.username}}</span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-light text-small shadow">
+                    <li><a class="dropdown-item" href="/profile/me">Profile</a></li>
+                    <li>
+                      <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/auth/logout">Log out</a></li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col">
+          {% block content %}
+          {% endblock %}
+        </div>
+
       </div>
-        {% block content %}
-        {% endblock %}
     </div>
+    <script src="/static/follow-unfollow.js"></script>
+    <script src="/static/follow-unfollow-modals.js"></script>
+    <script src="/static/follow-unfollow-modals-me.js"></script>
     <script src="/static/like-dislike.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
   </body>

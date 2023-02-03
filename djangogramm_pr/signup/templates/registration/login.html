@@ -1,19 +1,19 @@
 {% extends "login-base.html" %}
     {% block content %}
       <div class="container">
-        <div class="row justify-content-md-center align-items-center">
+        <div class="row justify-content-center align-items-center">
           <div class="col-lg-3 d-none d-lg-block col">
             <img src="/static/iphone-7.png" width="220px" class="img-fluid" alt="Phone image">
           </div>
           <div class="col-12 col-lg-4 col-xl-4">
             <div class="card">
               <div class="card-body">
-                <div class="row justify-content-md-center mt-5">
+                <div class="row justify-content-center mt-5">
                   <div class="col text-center">
                     <img src="/static/logo.png" width="200px" class="img-fluid">
                   </div>
                 </div>
-                <div class="row justify-content-md-center mt-5">
+                <div class="row justify-content-center mt-5">
                   <div class="col-12 col-md-10 col-lg-10 col-xl-10 text-center">
                     <form method="post" action="/auth/login/" class="form-group">
                       {% csrf_token %}
@@ -40,7 +40,7 @@
             </div>
             <div class="card mt-4">
               <div class="card-body text-center">
-                    <h6 class="fw-normal">Do not have an account? <a href="/auth/signup" class="text-decoration-none">Sign up</a></h6>
+                <h6 class="fw-normal">Do not have an account? <a href="/auth/signup" class="text-decoration-none">Sign up</a></h6>
               </div>
             </div>
           </div>

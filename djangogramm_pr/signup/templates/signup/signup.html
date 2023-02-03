@@ -1,21 +1,21 @@
 {% extends "login-base.html" %}
     {% block content %}
       <div class="container">
-        <div class="row justify-content-md-center" style="height:85vh;">
+        <div class="row justify-content-center" style="height:85vh;">
           <div class="col-12 col-md-7 col-lg-5 col-xl-4">
             <div class="card">
               <div class="card-body">
-                <div class="row justify-content-md-center mt-5">
+                <div class="row justify-content-center mt-5">
                   <div class="col text-center">
                     <img src="/static/logo.png" width="200px" class="img-fluid">
                   </div>
                 </div>
-                <div class="row justify-content-md-center mt-5">
+                <div class="row justify-content-center mt-5">
                   <div class="col-12 col-md-8 col-lg-8 col-xl-9 text-center">
                     <h6 class="text-black-50 fw-normal">Sign up to see photos and videos from your friends.</h6>
                   </div>
                 </div>
-                <div class="row justify-content-md-center mt-5">
+                <div class="row justify-content-center mt-5">
                   <div id='form' class="col-12 col-md-10 col-lg-10 col-xl-10 text-center">
                     <form method='post' action='/auth/signup/' class="form-group">
                     {% csrf_token %}
@@ -44,13 +44,13 @@
                     </form>
                   </div>
                 </div>
-                <div class="row justify-content-md-center mt-4">
-                   <div class="col-12 col-md-10 col-lg-10 col-xl-10 text-center">
-                     <h6 class="fw-light text-muted">By registering, you accept our
-                       <a href="#" class="text-decoration-none">Terms, Privacy Policy</a> and
-                       <a href="#" class="text-decoration-none">Cookies Policy</a>.
-                     </h6>
-                   </div>
+                <div class="row justify-content-center mt-4">
+                  <div class="col-12 col-md-10 col-lg-10 col-xl-10 text-center">
+                    <h6 class="fw-light text-muted">By registering, you accept our
+                      <a href="#" class="text-decoration-none">Terms, Privacy Policy</a> and
+                      <a href="#" class="text-decoration-none">Cookies Policy</a>.
+                    </h6>
+                 </div>
                 </div>
               </div>
             </div>

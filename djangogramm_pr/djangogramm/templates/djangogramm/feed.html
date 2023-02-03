@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
   <div class="row justify-content-md-center">
-    <div class="col-6">
+    <div class="col-12 col-xl-6 col-lg-6">
       {% for post in posts %}
       <section>
         <div class="card mt-3">
@@ -11,10 +11,10 @@
             <div class="container">
               <a class="text-decoration-none text-dark" href="profile/{% if user.username == post.author.user.username %}me{% else %}{{ post.author.user.username }}{% endif %}">
                 <div class="row mb-3 bg-white">
-                  <div class="col-2">
+                  <div class="col-4 col-lg-2 col-xl-2">
                     <img src="/media/{{post.author.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
                   </div>
-                  <div class="col-6 pt-2">
+                  <div class="col pt-2">
                     <h6>{{post.author.user.username}}</h6>
                   </div>
                 </div>
@@ -58,7 +58,7 @@
                 {% endif %}
               </div>
               <div class="row mt-3 bg-white">
-                <div class="col-1">
+                <div class="col-2 col-lg-1 col-xl-1">
                   {% load define_like %}
                   {% get_like post.likes.all user as like %}
                     {% if like %}
