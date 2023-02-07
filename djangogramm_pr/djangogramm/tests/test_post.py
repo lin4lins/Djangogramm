@@ -1,4 +1,6 @@
 from django.urls import reverse
+from faker import Faker
+
 from djangogramm.models import (Post, Image, Tag)
 from djangogramm.tests import (ProfileBaseTestCase, create_test_post,
                                create_test_profile, create_test_user,
@@ -17,6 +19,15 @@ class PostCreateTestCase(ProfileBaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'djangogramm/post_create.html')
 
+    def test_get_no_profile(self):
+        self.profile.delete()
+        response = self.client.get(self.path)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('profile-create'))
+
+        self.profile = create_test_profile(self.user)
+
     def test_post(self):
         response = self.client.post(self.path, data=get_post_form_data())
         post = Post.objects.get(author=self.profile)
@@ -28,13 +39,21 @@ class PostCreateTestCase(ProfileBaseTestCase):
 
         post.delete()
 
-    def test_post_invalid_form(self):
+    def test_post_invalid_files(self):
         data = get_post_form_data('pdf_post.pdf')
         response = self.client.post(self.path, data=data)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'errors.html')
-        self.assertContains(response, 'Upload a valid image. The file you uploaded was either not an image or a corrupted image.')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('post-create'))
+
+    def test_post_invalid_caption(self):
+        data = get_post_form_data()
+        faker = Faker('en_US')
+        data['caption'] = faker.text(max_nb_chars=2000)
+        response = self.client.post(self.path, data=data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('post-create'))
 
 
 class PostDeleteTestCase(ProfileBaseTestCase):
@@ -49,6 +68,7 @@ class PostDeleteTestCase(ProfileBaseTestCase):
         self.assertEqual(response.url, reverse('profile-me'))
         with self.assertRaises(Post.DoesNotExist):
             Post.objects.get(id=post.id)
+
         self.assertEqual(Image.objects.filter(post=post).count(), 0)
         self.assertEqual(Tag.objects.filter(posts=post).count(), 0)
 

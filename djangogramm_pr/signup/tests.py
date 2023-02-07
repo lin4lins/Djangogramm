@@ -52,8 +52,9 @@ class SignUpTestCase(TestCase):
         response = self.client.post(self.path, data=VALID_USER_FORM_DATA)
 
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'errors.html')
+        self.assertTemplateUsed(response, 'signup/signup.html')
         self.assertContains(response, 'A user with that username already exists.')
+        self.assertContains(response, 'User with this Email already exists.')
 
         user.delete()
 

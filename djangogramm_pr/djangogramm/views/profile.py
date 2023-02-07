@@ -46,12 +46,17 @@ class ProfileView(LoginRequiredMixin, ProfileRequiredMixin, View):
     template_name = 'djangogramm/profile.html'
 
     def get(self, request, username):
-        user =  User.objects.get(username=username)
+        user =  get_object_or_404(User, username=username)
         if user == request.user:
             return redirect(reverse_lazy('profile-me'))
 
+        try:
+            profile = Profile.objects.select_related('user').get(user=user)
+
+        except Profile.DoesNotExist:
+            return HttpResponse(status=404)
+
         current_profile = Profile.objects.select_related('user').get(user=request.user)
-        profile = Profile.objects.select_related('user').get(user=user)
         posts = Post.objects.prefetch_related('tags', 'media', 'likes').filter(author=profile)
         likes = Like.objects.select_related().filter(post__in=posts)
         followers = Follower.objects.select_related().filter(who_is_followed=profile)
