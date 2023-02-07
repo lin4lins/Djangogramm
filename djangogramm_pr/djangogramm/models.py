@@ -11,9 +11,9 @@ from djangogramm.managers import PostQuerySet
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = 'profile')
-    full_name = models.CharField(max_length=100, null=True)
+    full_name = models.CharField(max_length=100, null=False)
     bio = models.CharField(max_length=255, null=True)
-    avatar = models.ImageField(upload_to='avatars/', null=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 
     def __str__(self):
         return f'full_name:{self.full_name}, bio:{self.bio}'

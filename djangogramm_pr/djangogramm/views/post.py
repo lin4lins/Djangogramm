@@ -9,6 +9,7 @@ from djangogramm.mixins import ProfileRequiredMixin
 
 
 class PostCreateView(LoginRequiredMixin, ProfileRequiredMixin, View):
+    url = reverse_lazy('post-create')
     login_url = '/auth/login'
     template_name = 'djangogramm/post_create.html'
     redirect_url = reverse_lazy('feed')
@@ -19,10 +20,9 @@ class PostCreateView(LoginRequiredMixin, ProfileRequiredMixin, View):
                                                     'post_form': PostForm, 'image_form': ImageForm})
 
     def post(self, request):
-        post_form = PostForm(request.POST)
-        image_form = ImageForm(request.POST, request.FILES)
-
         try:
+            post_form = PostForm(request.POST)
+            image_form = ImageForm(request.POST, request.FILES)
             if not post_form.is_valid():
                 raise InvalidFormException(form=post_form)
 
@@ -39,7 +39,7 @@ class PostCreateView(LoginRequiredMixin, ProfileRequiredMixin, View):
             return redirect(self.redirect_url)
 
         except InvalidFormException:
-            return render(request, self.template_name, {'post_form': PostForm, 'image_form': ImageForm})
+            return redirect(self.url)
 
 class PostDeleteView(LoginRequiredMixin, View):
     login_url = '/auth/login'

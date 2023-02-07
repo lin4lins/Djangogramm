@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
+
+from djangogramm.errors import InvalidFormException
 from djangogramm.forms import ProfileForm
 from djangogramm.mixins import ProfileRequiredMixin
 from djangogramm.models import Follower, Like, Post, Profile
@@ -13,6 +15,7 @@ from signup.models import User
 
 
 class ProfileCreateView(LoginRequiredMixin, View):
+    url = reverse_lazy('profile-create')
     login_url = '/auth/login'
     template_name = 'djangogramm/profile_create.html'
     redirect_url = reverse_lazy('profile-me')
@@ -21,15 +24,18 @@ class ProfileCreateView(LoginRequiredMixin, View):
         return render(request, self.template_name, {'form': ProfileForm})
 
     def post(self, request):
-        form = ProfileForm(request.POST, request.FILES)
         try:
+            form = ProfileForm(request.POST, request.FILES)
             if form.is_valid():
                 profile = form.save(commit=False)
                 profile.user = self.request.user
                 profile.save()
                 return redirect(self.redirect_url)
 
-            return render(request, 'signup/signup.html', {'form': form})
+            raise InvalidFormException(form=form)
+
+        except InvalidFormException:
+            return redirect(self.url)
 
         except IntegrityError:
             return HttpResponse(status=405)
@@ -72,6 +78,7 @@ class ProfileMeView(LoginRequiredMixin, ProfileRequiredMixin, View):
 
 
 class ProfileUpdateView(LoginRequiredMixin, ProfileRequiredMixin, View):
+    url = reverse_lazy('profile-update')
     login_url = '/auth/login'
     template_name = 'djangogramm/profile_update.html'
     redirect_url = reverse_lazy('profile-me')
@@ -83,13 +90,17 @@ class ProfileUpdateView(LoginRequiredMixin, ProfileRequiredMixin, View):
         return render(request, self.template_name, {'current_profile': current_profile, 'form': filled_form})
 
     def post(self, request):
-        form = ProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            profile = get_object_or_404(Profile, user=request.user)
-            profile.full_name = form.cleaned_data['full_name']
-            profile.bio = form.cleaned_data['bio']
-            profile.avatar = form.cleaned_data['avatar']
-            profile.save()
-            return redirect(self.redirect_url)
+        try:
+            form = ProfileForm(request.POST, request.FILES)
+            if form.is_valid():
+                profile = get_object_or_404(Profile, user=request.user)
+                profile.full_name = form.cleaned_data['full_name']
+                profile.bio = form.cleaned_data['bio']
+                profile.avatar = form.cleaned_data['avatar'] if form.cleaned_data['avatar'] else None
+                profile.save()
+                return redirect(self.redirect_url)
 
-        return render(request, self.template_name, {'form': ProfileForm})
+            raise InvalidFormException(form=form)
+
+        except InvalidFormException:
+            return redirect(self.url)
