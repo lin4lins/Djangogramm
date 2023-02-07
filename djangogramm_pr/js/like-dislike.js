@@ -9,7 +9,7 @@ function like(post_id, csrf_token) {
   }).then((res) => {
     if (res.status === 201) {
       set_liked_png(post_id, csrf_token);
-      add_like_to_counter(post_id, csrf_token);
+      add_like_to_counter(post_id);
     }
   }).catch((error) => {
     console.log(error)
@@ -27,7 +27,7 @@ function dislike(post_id, csrf_token) {
   }).then((res) => {
     if (res.status === 204) {
       set_disliked_png(post_id, csrf_token);
-      subtract_like_from_counter(post_id, csrf_token);
+      subtract_like_from_counter(post_id);
     }
   }).catch((error) => {
     console.log(error)

@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
-from djangogramm.models import Like, Post, Profile
+from djangogramm.models import Like, Post
 
 
 class CreateLikeView(LoginRequiredMixin, View):
@@ -10,9 +10,15 @@ class CreateLikeView(LoginRequiredMixin, View):
 
     def post(self, request, post_id: int):
         liked_post = get_object_or_404(Post, id=post_id)
-        liked_by = get_object_or_404(Profile, user_id=request.user.id)
-        Like.objects.create(post=liked_post, profile=liked_by)
-        return HttpResponse(status=201)
+        try:
+            Like.objects.get(post=liked_post, profile=request.user.profile)
+
+        except Like.DoesNotExist:
+            Like.objects.create(post=liked_post, profile=request.user.profile)
+            return HttpResponse(status=201)
+
+        else:
+            return HttpResponse(status=404)
 
 
 

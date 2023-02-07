@@ -1,18 +1,70 @@
-{% extends "base.html" %}
-
-{% block content%}
-    <form method="POST">
-        <h1>Sign up</h1>
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group mb-3">
-            <label>{{ field.label_tag }}</label>
-            {{ field }}
-            {% if field.help_text %}
-              <small style="color: grey">{{ field.help_text }}</small>
-            {% endif %}
+{% extends "login-base.html" %}
+    {% block content %}
+      <div class="container">
+        <div class="row justify-content-center" style="height:85vh;">
+          <div class="col-12 col-md-7 col-lg-5 col-xl-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="row justify-content-center mt-5">
+                  <div class="col text-center">
+                    <img src="/static/logo.png" width="200px" class="img-fluid">
+                  </div>
+                </div>
+                <div class="row justify-content-center mt-5">
+                  <div class="col-12 col-md-8 col-lg-8 col-xl-9 text-center">
+                    <h6 class="text-black-50 fw-normal">Sign up to see photos and videos from your friends.</h6>
+                  </div>
+                </div>
+                <div class="row justify-content-center mt-2">
+                  <div id='form' class="col-12 col-md-10 col-lg-10 col-xl-10 text-center">
+                    {% load widget_tweaks %}
+                      <form method='post' action='/auth/signup/' class="form-group" novalidate>
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                          <div class="alert alert-danger" role="alert">
+                            {% for error in form.non_field_errors %}
+                              {{ error }}
+                            {% endfor %}
+                          </div>
+                        {% endif %}
+                        {% for field in form.visible_fields %}
+                          <div class="form-group">
+                            {% if form.is_bound %}
+                              {% if field.errors %}
+                                {% render_field field class="form-control is-invalid fw-normal mt-3" placeholder=field.name %}
+                                {% for error in field.errors %}
+                                  <div class="invalid-feedback">
+                                    {{ error }}
+                                  </div>
+                                {% endfor %}
+                              {% else %}
+                                {% render_field field class="form-control is-valid fw-normal mt-3" placeholder=field.name %}
+                              {% endif %}
+                            {% else %}
+                              {% render_field field class="form-control fw-normal mt-3" placeholder=field.name %}
+                            {% endif %}
+                          </div>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary mt-3">Sign up</button>
+                      </form>
+                  </div>
+                </div>
+                <div class="row justify-content-center mt-4">
+                  <div class="col-12 col-md-10 col-lg-10 col-xl-10 text-center">
+                    <h6 class="fw-light text-muted">By registering, you accept our
+                      <a href="#" class="text-decoration-none">Terms, Privacy Policy</a> and
+                      <a href="#" class="text-decoration-none">Cookies Policy</a>.
+                    </h6>
+                 </div>
+                </div>
+              </div>
+            </div>
+            <div class="card mt-4">
+              <div class="card-body text-center">
+                    <h6 class="fw-normal">Already have an account? <a href="/auth/login" class="text-decoration-none">Log in</a></h6>
+              </div>
+            </div>
+          </div>
         </div>
-        {% endfor %}
-            <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+      </div>
 {% endblock %}

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TransactionTestCase, override_settings
-from djangogramm.models import Image, Like, Post, Profile, Tag
+from djangogramm.models import Image, Like, Post, Profile, Tag, Follower
 from signup.models import User
 
 VALID_USER_FORM_DATA = {'email': 'test2@gmail.com',
@@ -53,6 +53,9 @@ def create_test_post(profile: Profile) -> Post:
 
 def create_test_like(profile: Profile, post: Post) -> Like:
     return Like.objects.create(profile=profile, post=post)
+
+def create_test_follower(who_follows: Profile, who_is_followed: Profile) -> Follower:
+    return Follower.objects.create(who_follows=who_follows, who_is_followed=who_is_followed)
 
 def create_test_tag(post: Post) -> Tag:
     tag = Tag.objects.create(name='test1')

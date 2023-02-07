@@ -30,8 +30,7 @@ class SignUpView(View):
             self.__send_confirmation_email(request, user)
             return HttpResponse("Check your email")
 
-        error_messages = [message for message in form.errors.values()]
-        return render(request, 'errors.html', {'error_messages': error_messages})
+        return render(request, 'signup/signup.html', {'form': form})
 
     @staticmethod
     def __send_confirmation_email(request, user) -> None:

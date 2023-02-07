@@ -1,12 +1,106 @@
 {% extends "base.html" %}
 
-{% block content%}
-    <h1>Searching results for tag {{ tag.name }}</h1>
-    <h1>Found {{ tag.posts.all|length }} matches</h1>
-    {% for post in tag.posts.all %}
-        <p>{{post.author.user.username}}</p>
-        <img src="/media/{{post.media.all.0.preview}}"/>
-        <p>{{post.likes.all|length }} likes</p>
-    {% endfor %}
+{% block content %}
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div class="col-12 col-xl-6 col-lg-6">
+      <h5 class="fw-normal text-center">Results for tag <span class="text-primary">#{{ tag.name }}</span></h5>
+      {% for post in posts %}
+      {% load define_profile %}
+      {% get_profile profiles post.author as profile %}
+      <section>
+        <div class="card mt-3">
+          <div class="card-body">
+            <div class="container">
+              <a class="text-decoration-none text-dark" href="/profile/{% if user.username == profile.user.username %}me{% else %}{{ profile.user.username }}{% endif %}">
+                <div class="row mb-3 bg-white">
+                  <div class="col-4 col-lg-2 col-xl-2">
+                    <img src='
+                    {% if profile.avatar %}
+                      /media/{{profile.avatar}}
+                    {% else %}
+                      /static/profile_avatar.png
+                    {% endif %}'
+                         class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                  </div>
+                  <div class="col pt-2">
+                    <h6>{{profile.user.username}}</h6>
+                  </div>
+                </div>
+              </a>
+              <div class="row">
+                {% if post.media.all|length > 1 %}
+                <div id="postIndicators-{{post.id}}" class="carousel slide" data-bs-ride="carousel">
+                  <div class="carousel-indicators">
+                    {% for image in post.media.all%}
+                      {% if image.position == 0 %}
+                      <button type="button" data-bs-target="#postIndicators-{{post.id}}" data-bs-slide-to="{{image.position}}" class="active" aria-current="true" aria-label="Slide {{image.position}}"></button>
+                      {% else %}
+                      <button type="button" data-bs-target="#postIndicators-{{post.id}}" data-bs-slide-to="{{image.position}}" aria-label="Slide {{image.position}}"></button>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  <div class="carousel-inner">
+                    {% for image in post.media.all %}
+                      {% if image.position == 0 %}
+                      <div class="carousel-item active">
+                        <img src="/media/{{image.preview}}" class="img-fluid" style="height:auto;max-width:100%;"/>
+                      </div>
+                      {% else %}
+                      <div class="carousel-item">
+                        <img src="/media/{{image.preview}}" class="img-fluid" style="height:auto;max-width:100%;"/>
+                      </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#postIndicators-{{post.id}}" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#postIndicators-{{post.id}}" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+                </div>
+                {% else %}
+                <img src="/media/{{post.media.all.0.preview}}" style="width:600px;height:600px;object-fit:cover;"/>
+                {% endif %}
+              </div>
+              <div class="row mt-3 bg-white">
+                <div class="col-2 col-lg-1 col-xl-1">
+                  {% load define_like %}
+                  {% get_like current_profile likes as like %}
+                    {% if like %}
+                      <img id="like-{{post.id}}" src="/static/like.png" onclick="dislike({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                    {% else %}
+                      <img id="no-like-{{post.id}}" src="/static/no-like.png" onclick="like({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                    {% endif %}
+                </div>
+                <div class="col pt-1">
+                  <h6 id="like-counter-{{post.id}}">{{ post.likes.all|length }}</h6>
+                </div>
+              </div>
+              <div class="row mt-2">
+                <a class="text-decoration-none text-dark" href="/profile/{% if user.username == profile.user.username %}me{% else %}{{ profile.user.username }}{% endif %}">
+                  <div class="col">
+                    {% load tagify_caption %}
+                    {% get_caption_with_tags post.caption as caption %}
+                    <h6><strong>{{profile.username}}</strong> {{ caption|slice:":60" }}...</h6>
+                  </div>
+                </a>
+              </div>
+              <div class="row mt-2">
+                <div class="col">
+                  <p>{{post.created_at}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 
 {% endblock %}

@@ -1,11 +1,41 @@
 {% extends "base.html" %}
 
 {% block content%}
-<h1>Create post</h1>
-    <form method="POST" class="form-group" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ post_form.as_div }}
-        {{ image_form.as_div }}
-        <button type="submit" value="Submit" class="btn btn-success">Submit</button>
-    </form>
+<div class="container">
+  <div class="row justify-content-center align-items-center" style="height:90vh">
+    <div class="col-12 col-xl-6 col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <form method="POST" class="form-group" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row align-items-center">
+              <div class="col"></div>
+              <div class="col-5 col-xl-9 col-lg-9 col-md-9 text-center">
+                <h6 class="fw-normal">Create post</h6>
+              </div>
+              <div class="col pb-1">
+                <button type="submit" value="Submit" class="btn btn-primary">Share</button>
+              </div>
+              <hr class="style1">
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="row mb-3">
+                  <div class="col">
+                    <textarea class="form-control" name="caption" id="id_caption" placeholder="caption"></textarea>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <input class="form-control" type="file" name="original" multiple="" accept="image/*" required="" id="id_original">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

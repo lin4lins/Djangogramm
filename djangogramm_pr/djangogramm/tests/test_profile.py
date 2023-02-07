@@ -35,28 +35,26 @@ class ProfileCreateTestCase(BaseTestCase):
         data = get_profile_form_data('pdf.pdf')
         response = self.client.post(self.path, data=data)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'errors.html')
-        self.assertContains(response, 'Upload a valid image. The file you uploaded was either not an image or a corrupted image.')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('profile-create'))
 
 
-class ProfileTestCase(BaseTestCase):
+class ProfileTestCase(ProfileBaseTestCase):
     def setUp(self):
         super().setUp()
         self.viewname = 'profile'
 
     def test_get_me(self):
-        profile = create_test_profile(self.user)
-        response = self.client.get(reverse(self.viewname, kwargs={'username': profile.user.username}))
+        response = self.client.get(reverse(self.viewname, kwargs={'username': self.profile.user.username}))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'djangogramm/profile.html')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('profile-me'))
 
-        profile.delete()
 
     def test_get_profile(self):
         user = create_test_user(email='test99@gmail.com', username='test99')
         profile = create_test_profile(user)
+
         response = self.client.get(reverse(self.viewname, kwargs={'username': profile.user.username}))
 
         self.assertEqual(response.status_code, 200)
@@ -65,9 +63,16 @@ class ProfileTestCase(BaseTestCase):
         profile.delete()
         user.delete()
 
-    def test_get_profile_not_exists(self):
+    def test_get_profile_no_current_profile(self):
+        self.profile.delete()
         response = self.client.get(reverse(self.viewname, kwargs={'username': 'test99'}))
 
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('profile-create'))
+        self.profile = create_test_profile(self.user)
+
+    def test_get_profile_not_exists(self):
+        response = self.client.get(reverse(self.viewname, kwargs={'username': 'test99'}))
         self.assertEqual(response.status_code, 404)
 
 
@@ -83,11 +88,12 @@ class ProfileMeTestCase(ProfileBaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'djangogramm/profile-me.html')
 
-    def test_get_profile_not_exists(self):
+    def test_get_current_profile_not_exists(self):
         self.profile.delete()
 
         response = self.client.get(self.path)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('profile-create'))
 
         self.profile = create_test_profile(self.user)
 
@@ -104,13 +110,15 @@ class ProfileUpdateTestCase(ProfileBaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'djangogramm/profile_update.html')
 
-    def test_get_profile_not_exists(self):
+    def test_get_current_profile_not_exists(self):
         self.profile.delete()
         response = self.client.get(self.path)
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('profile-create'))
 
         self.profile = create_test_profile(self.user)
+
 
     def test_post(self):
         response = self.client.post(self.path, data=get_profile_form_data())
@@ -122,7 +130,8 @@ class ProfileUpdateTestCase(ProfileBaseTestCase):
         self.profile.delete()
 
         response = self.client.post(self.path, data=get_profile_form_data())
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('profile-create'))
 
         self.profile = create_test_profile(self.user)
 
@@ -130,6 +139,5 @@ class ProfileUpdateTestCase(ProfileBaseTestCase):
         data = get_profile_form_data('pdf.pdf')
         response = self.client.post(self.path, data=data)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'errors.html')
-        self.assertContains(response, 'Upload a valid image. The file you uploaded was either not an image or a corrupted image.')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('profile-update'))

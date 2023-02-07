@@ -22,13 +22,14 @@ class CreateLikeTestCase(PostBaseTestCase):
 
         self.post = create_test_post(self.profile)
 
-    def test_post_profile_not_exists(self):
-        self.profile.delete()
+
+    def test_like_already_exists(self):
+        like = Like.objects.create(post=self.post, profile=self.profile)
 
         response = self.client.post(reverse(self.viewname, kwargs={'post_id': self.post.id}))
         self.assertEqual(response.status_code, 404)
 
-        self.profile = create_test_profile(self.user)
+        like.delete()
 
 
 class DeleteLikeTestCase(PostBaseTestCase):
@@ -55,11 +56,3 @@ class DeleteLikeTestCase(PostBaseTestCase):
         self.assertEqual(response.status_code, 404)
 
         self.post = create_test_post(self.profile)
-
-    def test_post_profile_not_exists(self):
-        self.profile.delete()
-
-        response = self.client.post(reverse(self.viewname, kwargs={'post_id': self.post.id}))
-        self.assertEqual(response.status_code, 404)
-
-        self.profile = create_test_profile(self.user)
