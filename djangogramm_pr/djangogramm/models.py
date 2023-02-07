@@ -10,7 +10,7 @@ from djangogramm.managers import PostQuerySet
 # Create your models here.
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = 'profile')
     full_name = models.CharField(max_length=100, null=True)
     bio = models.CharField(max_length=255, null=True)
     avatar = models.ImageField(upload_to='avatars/', null=True)
@@ -20,7 +20,7 @@ class Profile(models.Model):
 
 
 class Post(models.Model):
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name = 'posts')
     caption = models.CharField(null=True, max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
 

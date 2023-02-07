@@ -4,12 +4,12 @@
 <div class="container-lg mt-4">
   <div class="row justify-content-center mt-5">
     <div class="col col-2">
-      <img src="/media/{{user.profile.avatar}}" class="img-thumbnail rounded-circle" style="width:150px;height:150px;object-fit:cover;">
+      <img src="/media/{{current_profile.avatar}}" class="img-thumbnail rounded-circle" style="width:150px;height:150px;object-fit:cover;">
     </div>
     <div class="col col-9 ml-3">
       <div class="row">
         <div class="col">
-          <h5>{{user.username}}</h5>
+          <h5>{{current_profile.user.username}}</h5>
         </div>
         <div class="col col-4">
           <button type="button" class="btn btn-outline-dark" onClick="location.href='/profile/me/update'">Edit profile</button>
@@ -21,19 +21,19 @@
         </div>
         <div class="col">
           <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#followersModal">
-            <p><strong>{{user.profile.followers.all|length}}</strong> followers</p>
+            <p><strong>{{followers|length}}</strong> followers</p>
           </a>
         </div>
         <div class="col">
           <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#followingModal">
-            <p><strong id="following_count">{{user.profile.following.all|length}}</strong> following</p>
+            <p><strong id="following_count">{{following|length}}</strong> following</p>
           </a>
         </div>
       </div>
       <div class="row mt-3">
         <div class="col col-8">
-          <h6>{{user.profile.full_name}}</h6>
-          <p>{{user.profile.bio}}</p>
+          <h6>{{current_profile.full_name}}</h6>
+          <p>{{current_profile.bio}}</p>
         </div>
       </div>
     </div>
@@ -99,7 +99,7 @@
             <div class="col border">
               <div class="row mt-3 pb-3 border-bottom">
                 <div class="col-2">
-                  <img src="/media/{{user.profile.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                  <img src="/media/{{current_profile.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
                 </div>
                 <div class="col">
                   <h5>{{user.username}}</h5>
@@ -108,12 +108,12 @@
               <div class="row mt-3">
                 {% load tagify_caption %}
                 {% get_caption_with_tags post.caption as caption %}
-                <p><strong>{{user.username}}</strong> {{caption}}</p>
+                <p><strong>{{current_profile.user.username}}</strong> {{caption}}</p>
               </div>
               <div class="row border-top pt-2">
                 <div class="col-1">
                   {% load define_like %}
-                  {% get_like post.likes.all user as like %}
+                  {% get_like likes user as like %}
                     {% if like %}
                       <img id="like-{{post.id}}" src="/static/like.png" onclick="dislike({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
                     {% else %}
@@ -121,7 +121,7 @@
                     {% endif %}
                 </div>
                 <div class="col-3 text-center">
-                  <h6 id="like-counter-{{post.id}}">{{ post.likes.all|length }}</h6>
+                  <h6 id="like-counter-{{post.id}}">{{ likes|length }}</h6>
                 </div>
                 <div class="col-6"></div>
                 <div class="col">
@@ -158,7 +158,7 @@
             <h6>Followers</h6>
             <hr class="style1">
           </div>
-          {% for follower in user.profile.followers.all %}
+          {% for follower in followers %}
             <div class="row align-items-center pb-2">
               <div class="col-3 text-center">
                 <a class="text-decoration-none text-dark" href="/profile/{{follower.who_follows.user.username}}">
@@ -172,7 +172,7 @@
               </div>
               <div class="col-3">
                 {% load define_follower %}
-                  {% is_followed_by_current_user user follower.who_follows as is_followed %}
+                  {% is_followed_by_current_profile current_profile follower.who_follows following_profiles as is_followed %}
                     {% if is_followed %}
                       <button id="unfollow-modal-button-{{follower.who_follows.user.username}}" type="button" class="btn btn-outline-dark" onClick="unfollowModalMe('{{follower.who_follows.user.username}}', '{{csrf_token}}')">Unfollow</button>
                     {% else %}
@@ -197,7 +197,7 @@
             <h6>Following</h6>
             <hr class="style1">
           </div>
-          {% for following in user.profile.following.all %}
+          {% for following in following_profiles %}
             <div class="row align-items-center pb-2">
               <div class="col-3 text-center">
                 <a class="text-decoration-none text-dark" href="/profile/{{following.who_is_followed.user.username}}">
@@ -211,7 +211,7 @@
               </div>
               <div class="col-3">
                 {% load define_follower %}
-                  {% is_followed_by_current_user user following.who_is_followed as is_followed %}
+                  {% is_followed_by_current_profile current_profile following.who_is_followed following_profiles as is_followed %}
                     {% if is_followed %}
                       <button id="unfollow-modal-button-{{following.who_is_followed.user.username}}" type="button" class="btn btn-outline-dark" onClick="unfollowModalMe('{{following.who_is_followed.user.username}}', '{{csrf_token}}')">Unfollow</button>
                     {% else %}

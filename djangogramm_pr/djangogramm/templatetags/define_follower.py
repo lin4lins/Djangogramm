@@ -1,16 +1,14 @@
 from django import template
 
-from djangogramm.models import Profile, Follower
-from signup.models import User
+from djangogramm.models import Profile
 
 register = template.Library()
 
 
 @register.simple_tag
-def is_followed_by_current_user(current_user: User, profile: Profile) -> bool:
-    try:
-        Follower.objects.get(who_follows=current_user.profile, who_is_followed=profile)
-        return True
+def is_followed_by_current_profile(current_profile: Profile, profile: Profile, following_profiles: list) -> bool:
+    for follower in following_profiles:
+        if follower.who_is_followed == profile and follower.who_follows == current_profile:
+            return True
 
-    except Follower.DoesNotExist:
-        return False
+    return False

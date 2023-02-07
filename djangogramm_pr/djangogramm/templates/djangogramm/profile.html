@@ -13,15 +13,11 @@
         </div>
         <div class="col-4">
           {% load define_follower %}
-            {% is_followed_by_current_user user profile as is_followed %}
+            {% is_followed_by_current_profile current_profile profile following_profiles as is_followed %}
             {% if is_followed %}
               <button id="unfollow-button-{{profile.user.username}}" type="button" class="btn btn-outline-dark" onClick="unfollow('{{profile.user.username}}', '{{csrf_token}}')">Unfollow</button>
             {% else %}
-              {% if user.profile == profile %}
-                <p></p>
-              {% else %}
-                <button id="follow-button-{{profile.user.username}}" type="button" class="btn btn-dark" onClick="follow('{{profile.user.username}}', '{{csrf_token}}')">Follow</button>
-              {% endif %}
+              <button id="follow-button-{{profile.user.username}}" type="button" class="btn btn-dark" onClick="follow('{{profile.user.username}}', '{{csrf_token}}')">Follow</button>
             {% endif %}
         </div>
       </div>
@@ -31,12 +27,12 @@
         </div>
         <div class="col">
           <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#followersModal">
-            <p><strong id="followers_count">{{profile.followers.all|length}}</strong> followers</p>
+            <p><strong id="followers_count">{{followers|length}}</strong> followers</p>
           </a>
         </div>
         <div class="col">
           <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#followingModal">
-            <p><strong>{{profile.following.all|length}}</strong> following</p>
+            <p><strong>{{following_profiles|length}}</strong> following</p>
           </a>
         </div>
       </div>
@@ -127,7 +123,7 @@
               <div class="row border-top pt-2">
                 <div class="col-1">
                   {% load define_like %}
-                  {% get_like post.likes.all user as like %}
+                  {% get_like current_profile likes as like %}
                     {% if like %}
                       <img id="like-{{post.id}}" src="/static/like.png" onclick="dislike({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
                     {% else %}
@@ -160,7 +156,7 @@
             <h6>Followers</h6>
             <hr class="style1">
           </div>
-          {% for follower in profile.followers.all %}
+          {% for follower in followers %}
             <div class="row align-items-center pb-2">
               <div class="col-3 text-center">
                 <a class="text-decoration-none text-dark" href="/profile/{{follower.who_follows.user.username}}">
@@ -174,15 +170,11 @@
               </div>
               <div class="col-3">
                 {% load define_follower %}
-                  {% is_followed_by_current_user user follower.who_follows as is_followed %}
+                  {% is_followed_by_current_profile current_profile follower.who_follows following_profiles as is_followed %}
                   {% if is_followed %}
                     <button id="unfollow-modal-button-{{follower.who_follows.user.username}}" type="button" class="btn btn-outline-dark" onClick="unfollowModal('{{follower.who_follows.user.username}}', '{{csrf_token}}')">Unfollow</button>
                   {% else %}
-                    {% if user.profile == follower.who_follows %}
-                      <p></p>
-                    {% else %}
-                      <button id="follow-modal-button-{{follower.who_follows.user.username}}" type="button" class="btn btn-outline-dark" onClick="followModal('{{follower.who_follows.user.username}}', '{{csrf_token}}')">Follow</button>
-                    {% endif %}
+                    <button id="follow-modal-button-{{follower.who_follows.user.username}}" type="button" class="btn btn-outline-dark" onClick="followModal('{{follower.who_follows.user.username}}', '{{csrf_token}}')">Follow</button>
                   {% endif %}
               </div>
             </div>
@@ -203,7 +195,7 @@
             <h6>Following</h6>
             <hr class="style1">
           </div>
-          {% for following in profile.following.all %}
+          {% for following in following_profiles %}
             <div class="row align-items-center pb-2">
               <div class="col-3 text-center">
                 <a class="text-decoration-none text-dark" href="/profile/{{following.who_is_followed.user.username}}">
@@ -217,15 +209,11 @@
               </div>
               <div class="col-3">
                 {% load define_follower %}
-                  {% is_followed_by_current_user user following.who_is_followed as is_followed %}
+                  {% is_followed_by_current_profile current_profile following.who_is_followed following_profiles as is_followed %}
                   {% if is_followed %}
                     <button id="unfollow-modal-button-{{following.who_is_followed.user.username}}" type="button" class="btn btn-outline-dark" onClick="unfollowModal('{{following.who_is_followed.user.username}}', '{{csrf_token}}')">Unfollow</button>
                   {% else %}
-                    {% if user.profile == following.who_is_followed %}
-                      <p></p>
-                    {% else %}
-                      <button id="follow-modal-button-{{following.who_is_followed.user.username}}" type="button" class="btn btn-outline-dark" onClick="followModal('{{following.who_is_followed.user.username}}', '{{csrf_token}}')">Follow</button>
-                    {% endif %}
+                    <button id="follow-modal-button-{{following.who_is_followed.user.username}}" type="button" class="btn btn-outline-dark" onClick="followModal('{{following.who_is_followed.user.username}}', '{{csrf_token}}')">Follow</button>
                   {% endif %}
               </div>
             </div>
