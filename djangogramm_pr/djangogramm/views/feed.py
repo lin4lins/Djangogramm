@@ -1,10 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
+
+from djangogramm.mixins import ProfileRequiredMixin
 from djangogramm.models import Like, Post, Profile
 
 
-class FeedView(LoginRequiredMixin, View):
+class FeedView(LoginRequiredMixin, ProfileRequiredMixin, View):
     login_url = '/auth/login'
     template_name = 'djangogramm/feed.html'
 

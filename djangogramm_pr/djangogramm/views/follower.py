@@ -2,12 +2,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
-from djangogramm.mixins import ProfileRequiredMixin
 from djangogramm.models import Follower, Profile
 from signup.models import User
 
 
-class CreateFollowView(LoginRequiredMixin, ProfileRequiredMixin, View):
+class CreateFollowView(LoginRequiredMixin, View):
     login_url = '/auth/login'
 
     def post(self, request, username: str):
@@ -24,7 +23,7 @@ class CreateFollowView(LoginRequiredMixin, ProfileRequiredMixin, View):
             return HttpResponse(status=404)
 
 
-class DeleteFollowView(LoginRequiredMixin, ProfileRequiredMixin, View):
+class DeleteFollowView(LoginRequiredMixin, View):
     login_url = '/auth/login'
 
     def post(self, request, username: str):

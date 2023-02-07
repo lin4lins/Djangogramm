@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from djangogramm.forms import ProfileForm
+from djangogramm.mixins import ProfileRequiredMixin
 from djangogramm.models import Follower, Like, Post, Profile
 from signup.models import User
 
@@ -34,7 +35,7 @@ class ProfileCreateView(LoginRequiredMixin, View):
             return HttpResponse(status=405)
 
 
-class ProfileView(LoginRequiredMixin, View):
+class ProfileView(LoginRequiredMixin, ProfileRequiredMixin, View):
     login_url = '/auth/login'
     template_name = 'djangogramm/profile.html'
 
@@ -55,7 +56,7 @@ class ProfileView(LoginRequiredMixin, View):
                                                    'followers': followers, 'following_profiles': following})
 
 
-class ProfileMeView(LoginRequiredMixin, View):
+class ProfileMeView(LoginRequiredMixin, ProfileRequiredMixin, View):
     login_url = '/auth/login'
     template_name = 'djangogramm/profile-me.html'
 
@@ -70,7 +71,7 @@ class ProfileMeView(LoginRequiredMixin, View):
                                                     'followers': followers, 'following_profiles': following})
 
 
-class ProfileUpdateView(LoginRequiredMixin, View):
+class ProfileUpdateView(LoginRequiredMixin, ProfileRequiredMixin, View):
     login_url = '/auth/login'
     template_name = 'djangogramm/profile_update.html'
     redirect_url = reverse_lazy('profile-me')

@@ -1,10 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
+
+from djangogramm.mixins import ProfileRequiredMixin
 from djangogramm.models import Like, Post, Profile, Tag
 
 
-class SearchTagView(LoginRequiredMixin, View):
+class SearchTagView(LoginRequiredMixin, ProfileRequiredMixin, View):
     login_url = "/auth/login"
     template_name = 'djangogramm/tag.html'
 

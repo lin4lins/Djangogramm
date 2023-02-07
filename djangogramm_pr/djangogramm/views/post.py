@@ -5,9 +5,10 @@ from django.views import View
 from djangogramm.errors import InvalidFormException
 from djangogramm.forms import ImageForm, PostForm
 from djangogramm.models import Image, Post, Profile
+from djangogramm.mixins import ProfileRequiredMixin
 
 
-class PostCreateView(LoginRequiredMixin, View):
+class PostCreateView(LoginRequiredMixin, ProfileRequiredMixin, View):
     login_url = '/auth/login'
     template_name = 'djangogramm/post_create.html'
     redirect_url = reverse_lazy('feed')
