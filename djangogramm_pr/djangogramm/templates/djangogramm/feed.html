@@ -14,7 +14,13 @@
               <a class="text-decoration-none text-dark" href="/profile/{% if user.username == profile.user.username %}me{% else %}{{ profile.user.username }}{% endif %}">
                 <div class="row mb-3 bg-white">
                   <div class="col-4 col-lg-2 col-xl-2">
-                    <img src="/media/{{profile.avatar}}" class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                    <img src='
+                      {% if profile.avatar %}
+                        /media/{{profile.avatar}}
+                      {% else %}
+                        /static/profile_avatar.png
+                      {% endif %}'
+                         class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
                   </div>
                   <div class="col pt-2">
                     <h6>{{profile.user.username}}</h6>
