@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
+
 <div class="container">
   <div class="row justify-content-md-center">
     <div class="col-12 col-xl-6 col-lg-6">
@@ -15,12 +16,12 @@
               <a class="text-decoration-none text-dark" href="/profile/{% if user.username == profile.user.username %}me{% else %}{{ profile.user.username }}{% endif %}">
                 <div class="row mb-3 bg-white">
                   <div class="col-4 col-lg-2 col-xl-2">
-                    <img src='
+                    <img src="
                     {% if profile.avatar %}
-                      /media/{{profile.avatar}}
+                      {{profile.avatar.url}}
                     {% else %}
-                      /static/profile_avatar.png
-                    {% endif %}'
+                      {% static 'profile_avatar.png' %}
+                    {% endif %}"
                          class="img-thumbnail rounded-circle" style="width:40px;height:40px;object-fit:cover;">
                   </div>
                   <div class="col pt-2">
@@ -44,11 +45,11 @@
                     {% for image in post.media.all %}
                       {% if image.position == 0 %}
                       <div class="carousel-item active">
-                        <img src="/media/{{image.preview}}" class="img-fluid" style="height:auto;max-width:100%;"/>
+                        <img src="{{image.preview.url}}" class="img-fluid" style="height:auto;max-width:100%;"/>
                       </div>
                       {% else %}
                       <div class="carousel-item">
-                        <img src="/media/{{image.preview}}" class="img-fluid" style="height:auto;max-width:100%;"/>
+                        <img src="{{image.preview.url}}" class="img-fluid" style="height:auto;max-width:100%;"/>
                       </div>
                       {% endif %}
                     {% endfor %}
@@ -63,7 +64,7 @@
                   </button>
                 </div>
                 {% else %}
-                <img src="/media/{{post.media.all.0.preview}}" style="width:600px;height:600px;object-fit:cover;"/>
+                <img src="{{post.media.all.0.preview.url}}" style="width:600px;height:600px;object-fit:cover;"/>
                 {% endif %}
               </div>
               <div class="row mt-3 bg-white">
@@ -71,9 +72,9 @@
                   {% load define_like %}
                   {% get_like current_profile likes as like %}
                     {% if like %}
-                      <img id="like-{{post.id}}" src="/static/like.png" onclick="dislike({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                      <img id="like-{{post.id}}" src="{% static 'like.png' %}" onclick="dislike({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
                     {% else %}
-                      <img id="no-like-{{post.id}}" src="/static/no-like.png" onclick="like({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                      <img id="no-like-{{post.id}}" src="{% static 'no-like.png' %}" onclick="like({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
                     {% endif %}
                 </div>
                 <div class="col pt-1">

@@ -121,10 +121,15 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
-/djangogramm_pr/djangogramm/migrations
-/djangogramm_pr/signup/migrations
-/djangogramm_pr/media
+000*.py
+/djangogramm_pr/media/avatars
+/djangogramm_pr/media/posts/originals
+/djangogramm_pr/media/posts/previews
 
 .env
 prod.env
 /djangogramm_pr/static
+
+settings-prod.py
+models-prod.py
+createall-prod.py

@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from signup.models import User
 
 from djangogramm.managers import PostQuerySet
+from mysite.storage_backends import PublicMediaStorage
 
 
 # Create your models here.
@@ -13,7 +14,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = 'profile')
     full_name = models.CharField(max_length=100, null=False)
     bio = models.CharField(max_length=255, null=True)
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    avatar = models.ImageField(upload_to="avatars/", storage=PublicMediaStorage(), null=True, blank=True)
 
     def __str__(self):
         return f'full_name:{self.full_name}, bio:{self.bio}'
@@ -49,8 +50,8 @@ class Post(models.Model):
 
 class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = 'media')
-    original = models.ImageField(upload_to='posts/originals')
-    preview = models.ImageField(upload_to='posts/previews')
+    original = models.ImageField(upload_to='posts/originals/', storage=PublicMediaStorage())
+    preview = models.ImageField(upload_to='posts/previews/', storage=PublicMediaStorage())
     position = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
@@ -71,5 +72,5 @@ class Like(models.Model):
 
 
 class Follower(models.Model):
-    who_follows = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name = 'following') # подписчик
-    who_is_followed = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='followers') # тот, на кого подписались
+    who_follows = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name = 'following')
+    who_is_followed = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='followers')
