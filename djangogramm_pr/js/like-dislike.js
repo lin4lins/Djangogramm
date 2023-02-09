@@ -37,7 +37,7 @@ function dislike(post_id, csrf_token) {
 
 function set_liked_png(post_id, csrf_token) {
   var old_img = document.getElementById(`no-like-${post_id}`);
-  var new_img = `<img id="like-${post_id}" src="/static/like.png" onclick="dislike(${post_id}, '${csrf_token}')" width="32" height="32"/>`;
+  var new_img = `<img id="like-${post_id}" src="{% static 'like.png' %}" onclick="dislike(${post_id}, '${csrf_token}')" width="32" height="32"/>`;
   if(old_img.outerHTML) {
     old_img.outerHTML = new_img;
   }
@@ -51,7 +51,7 @@ function add_like_to_counter(post_id) {
 
 function set_disliked_png(post_id, csrf_token) {
   var old_img = document.getElementById(`like-${post_id}`);
-  var new_img = `<img id="no-like-${post_id}" src="/static/no-like.png" onclick="like(${post_id}, '${csrf_token}')" width="32" height="32"/>`;
+  var new_img = `<img id="no-like-${post_id}" src="/{% static 'no-like.png' %}" onclick="like(${post_id}, '${csrf_token}')" width="32" height="32"/>`;
   if(old_img.outerHTML) {
     old_img.outerHTML = new_img;
   }
