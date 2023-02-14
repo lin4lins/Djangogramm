@@ -1,3 +1,7 @@
+import sys
+from io import BytesIO
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from PIL import Image as PIL_Image
 from django.shortcuts import get_object_or_404
@@ -54,11 +58,19 @@ class Image(models.Model):
     preview = models.ImageField(upload_to='posts/previews/', storage=PublicMediaStorage())
     position = models.IntegerField(default=0)
 
-    def save(self, *args, **kwargs):
+    def save_with_compress(self, *args, **kwargs):
+        self.__create_preview()
         super().save(*args, **kwargs)
-        image_to_compress = PIL_Image.open(self.preview.path)
-        image_to_compress.crop().save(self.preview.path, quality=60, optimize=False)
-        return self
+
+    def __create_preview(self):
+        output_thumb = BytesIO()
+        img = PIL_Image.open(self.original)
+        image_format = self.original.file.name.rsplit('.', 1)[1]
+        image_format = 'jpeg' if image_format == 'jpg' else image_format
+        img.save(output_thumb, format=image_format, quality=60)
+        self.preview = InMemoryUploadedFile(file=output_thumb, field_name='ImageField', name=self.original.file.name,
+                                            content_type=self.original.file.content_type,
+                                            size=sys.getsizeof(output_thumb), charset=None)
 
 
 class Tag(models.Model):
