@@ -138,7 +138,7 @@
               <div class="row border-top pt-2 align-items-center">
                 <div class="col-1">
                   {% load define_like %}
-                  {% get_like current_profile likes as like %}
+                  {% get_like current_profile likes post as like %}
                     {% if like %}
                       <i id="like-{{post.id}}" class="bi bi-heart-fill" onclick="dislike({{post.id}}, '{{csrf_token}}')" style="font-size: 1.9em;"></i>
                     {% else %}
