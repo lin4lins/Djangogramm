@@ -14,6 +14,6 @@ class FeedView(LoginRequiredMixin, ProfileRequiredMixin, View):
         current_profile = Profile.objects.select_related('user').get(user=request.user)
         profiles = Profile.objects.select_related('user').all()
         posts = Post.objects.select_related().prefetch_related('tags', 'media', 'likes').order_by('-created_at')
-        likes = Like.objects.select_related().filter(post__in=posts)
+        likes = Like.objects.select_related().filter()
         return render(request, self.template_name, {'current_profile': current_profile, 'posts': posts,
                                                     'profiles': profiles, 'likes':likes})
