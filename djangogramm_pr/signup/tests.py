@@ -102,3 +102,15 @@ class ConfirmationTestCase(TestCase):
         uidb64 = 'a12*' if is_uidb64_invalid else urlsafe_base64_encode(force_bytes(user_id))
         token = 'helloworld' if is_token_invalid else confirmation_token.make_token(self.user)
         return reverse(self.viewname, kwargs={'uidb64': uidb64, 'token': token})
+
+
+class TestGitHubLogin(TestCase):
+    def test(self):
+        response = self.client.get("/social/login/github/")
+        self.assertEqual(response.status_code, 302)
+
+
+class TestGoogleLogin(TestCase):
+    def test(self):
+        response = self.client.get("/social/login/google-oauth2/")
+        self.assertEqual(response.status_code, 302)
