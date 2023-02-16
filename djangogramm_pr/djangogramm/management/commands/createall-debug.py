@@ -1,16 +1,12 @@
-import io
 from datetime import datetime
 from random import choice, randint, sample, shuffle
 
-import boto3
-import requests
 from django.core.management.base import BaseCommand, CommandError
-from djangogramm.models import Follower, Image, Like, Post, Profile
 from faker import Faker
-from mysite import settings
+import requests
 from PIL import Image as PIL_Image
 
-from mysite.settings import PUBLIC_MEDIA_LOCATION
+from djangogramm.models import Profile, Post, Image, Like, Follower
 from signup.models import User
 
 PROFILES_COUNT = 10
@@ -28,8 +24,6 @@ MAX_IMAGES_PER_POST = 4
 IMG_SIZES_IN_PX = list(range(300, 1001, 100))
 
 faker = Faker('en_US')
-s3_client = boto3.client('s3', aws_access_key_id = settings.AWS_ACCESS_KEY_ID,
-                         aws_secret_access_key = settings.AWS_SECRET_ACCESS_KEY)
 
 
 class Command(BaseCommand):
@@ -58,7 +52,7 @@ class Command(BaseCommand):
             bio = faker.text(max_nb_chars=MAX_CHARS_FOR_BIO)
             user = User.objects.get(id=user_id)
             avatar_path = f'avatars/{user_id}-avatar.jpg'
-            Command.__download_image(f'{PUBLIC_MEDIA_LOCATION}/{avatar_path}')
+            Command.__download_image(avatar_path)
             Profile.objects.create(user=user, full_name=profile_data['name'], bio=bio, avatar=avatar_path)
 
         self.stdout.write("Profiles created successfully")
@@ -78,13 +72,14 @@ class Command(BaseCommand):
     def __create_fake_images(self, max_images=MAX_IMAGES_PER_POST):
         for post in Post.objects.all():
             for position in range(randint(MIN_IMAGES_PER_POST, max_images)):
-                image_path = f'{post.id}-{position}.jpg'
-                original_image_path = f'posts/originals/{image_path}'
-                preview_image_path = f'posts/previews/{image_path}'
-                original_image = self.__download_image(f'{PUBLIC_MEDIA_LOCATION}/{original_image_path}')
-                self.__compress_image(original_image, f'{PUBLIC_MEDIA_LOCATION}/{preview_image_path}')
+                original_image_path = f'posts/originals/{post.id}-{position}.jpg'
+                original_image = self.__download_image(original_image_path)
 
-                Image.objects.create(post=post, original=original_image_path, preview=preview_image_path, position=position)
+                preview_image = original_image.copy()
+                preview_image_path = f'posts/previews/{post.id}-{position}.jpg'
+                preview_image.save(f'media/{preview_image_path}')
+
+                Image(post=post, original=original_image_path, preview=preview_image_path, position=position).save()
 
         self.stdout.write("Images created successfully")
 
@@ -119,21 +114,9 @@ class Command(BaseCommand):
 
         response.raw.decode_content = True
         with PIL_Image.open(response.raw) as img:
-            img_byte_arr = io.BytesIO()
-            img.save(img_byte_arr, format='jpeg')
-            img_byte_arr = img_byte_arr.getvalue()
-
-            s3_client.put_object(Body=img_byte_arr, Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=image_path)
+            img.save(f'media/{image_path}')
             response.close()
             return img
-
-    @staticmethod
-    def __compress_image(image_to_compress, image_path: str):
-        img_byte_arr = io.BytesIO()
-        image_to_compress.crop().save(img_byte_arr, format='jpeg', quality=60, optimize=False)
-        img_byte_arr = img_byte_arr.getvalue()
-        s3_client.put_object(Body=img_byte_arr, Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-                             Key=image_path)
 
     @staticmethod
     def __add_tags_to_caption(caption: str):

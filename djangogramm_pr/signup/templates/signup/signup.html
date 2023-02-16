@@ -63,7 +63,13 @@
       </div>
       <div class="card mt-4">
         <div class="card-body text-center">
-              <h6 class="fw-normal">Already have an account? <a href="/auth/login" class="text-decoration-none">Log in</a></h6>
+          <h6 class="fw-normal">Login via <a href="{% url 'social:begin' 'github' %}" class="text-decoration-none">GitHub</a></h6>
+          <h6 class="fw-normal">Login via <a href="{% url 'social:begin' 'google-oauth2' %}" class="text-decoration-none">Google</a></h6>
+        </div>
+      </div>
+      <div class="card mt-4">
+        <div class="card-body text-center">
+          <h6 class="fw-normal">Already have an account? <a href="/auth/login" class="text-decoration-none">Log in</a></h6>
         </div>
       </div>
     </div>

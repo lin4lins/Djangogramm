@@ -34,7 +34,7 @@ class PostCreateView(LoginRequiredMixin, ProfileRequiredMixin, View):
             post.save()
 
             for position, image in enumerate(request.FILES.getlist('original')):
-                Image(post=post, original=image, preview=image, position=position).save()
+                Image(post=post, original=image, position=position).save_with_compress()
 
             return redirect(self.redirect_url)
 

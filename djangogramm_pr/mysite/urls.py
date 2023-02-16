@@ -20,12 +20,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("auth/", include("django.contrib.auth.urls")),
+    path('auth/', include("django.contrib.auth.urls")),
     path('auth/signup/', include('signup.urls')),
     path('', include('djangogramm.urls')),
     path('admin/', admin.site.urls),
-    path('__debug__/', include('debug_toolbar.urls')),
+    path('social/', include('social_django.urls', namespace='social'))
 ]
 
 if settings.DEBUG:
-      urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns.append(path('__debug__/', include('debug_toolbar.urls')))

@@ -123,14 +123,14 @@
                 {% get_caption_with_tags post.caption as caption %}
                 <p><strong>{{current_profile.user.username}}</strong> {{caption}}</p>
               </div>
-              <div class="row border-top pt-2">
+              <div class="row border-top pt-2 align-items-center">
                 <div class="col-1">
                   {% load define_like %}
-                  {% get_like current_profile likes as like %}
+                  {% get_like current_profile likes post as like %}
                     {% if like %}
-                      <img id="like-{{post.id}}" src="{% static 'like.png' %}" onclick="dislike({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                      <i id="like-{{post.id}}" class="bi bi-heart-fill" onclick="dislike({{post.id}}, '{{csrf_token}}')" style="font-size: 1.9em;"></i>
                     {% else %}
-                      <img id="no-like-{{post.id}}" src="{% static 'no-like.png' %}" onclick="like({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                      <i id="no-like-{{post.id}}" class="bi bi-heart" onclick="like({{post.id}}, '{{csrf_token}}')" style="font-size: 1.9em;"></i>
                     {% endif %}
                 </div>
                 <div class="col-3 text-center">

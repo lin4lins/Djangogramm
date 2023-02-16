@@ -67,14 +67,14 @@
                 <img src="{{post.media.all.0.preview.url}}" style="width:600px;height:600px;object-fit:cover;"/>
                 {% endif %}
               </div>
-              <div class="row mt-3 bg-white">
+              <div class="row mt-3 bg-white align-items-center">
                 <div class="col-2 col-lg-1 col-xl-1">
                   {% load define_like %}
-                  {% get_like current_profile likes as like %}
+                  {% get_like current_profile likes post as like %}
                     {% if like %}
-                      <img id="like-{{post.id}}" src="{% static 'like.png' %}" onclick="dislike({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                      <i id="like-{{post.id}}" class="bi bi-heart-fill" onclick="dislike({{post.id}}, '{{csrf_token}}')" style="font-size: 1.9em;"></i>
                     {% else %}
-                      <img id="no-like-{{post.id}}" src="{% static 'no-like.png' %}" onclick="like({{post.id}}, '{{csrf_token}}')" width="32" height="32"/>
+                      <i id="no-like-{{post.id}}" class="bi bi-heart" onclick="like({{post.id}}, '{{csrf_token}}')" style="font-size: 1.9em;"></i>
                     {% endif %}
                 </div>
                 <div class="col pt-1">

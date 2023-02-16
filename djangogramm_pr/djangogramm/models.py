@@ -1,3 +1,7 @@
+import sys
+from io import BytesIO
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from PIL import Image as PIL_Image
 from django.shortcuts import get_object_or_404
@@ -5,7 +9,6 @@ from django.shortcuts import get_object_or_404
 from signup.models import User
 
 from djangogramm.managers import PostQuerySet
-from mysite.storage_backends import PublicMediaStorage
 
 
 # Create your models here.
@@ -14,7 +17,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name = 'profile')
     full_name = models.CharField(max_length=100, null=False)
     bio = models.CharField(max_length=255, null=True)
-    avatar = models.ImageField(upload_to="avatars/", storage=PublicMediaStorage(), null=True, blank=True)
+    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
 
     def __str__(self):
         return f'full_name:{self.full_name}, bio:{self.bio}'
@@ -50,15 +53,23 @@ class Post(models.Model):
 
 class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name = 'media')
-    original = models.ImageField(upload_to='posts/originals/', storage=PublicMediaStorage())
-    preview = models.ImageField(upload_to='posts/previews/', storage=PublicMediaStorage())
+    original = models.ImageField(upload_to='posts/originals/')
+    preview = models.ImageField(upload_to='posts/previews/', null=True)
     position = models.IntegerField(default=0)
 
-    def save(self, *args, **kwargs):
+    def save_with_compress(self, *args, **kwargs):
+        self.__create_preview()
         super().save(*args, **kwargs)
-        image_to_compress = PIL_Image.open(self.preview.path)
-        image_to_compress.crop().save(self.preview.path, quality=60, optimize=False)
-        return self
+
+    def __create_preview(self):
+        output_thumb = BytesIO()
+        img = PIL_Image.open(self.original)
+        image_format = self.original.file.name.rsplit('.', 1)[1]
+        image_format = 'jpeg' if image_format == 'jpg' else image_format
+        img.save(output_thumb, format=image_format, quality=60)
+        self.preview = InMemoryUploadedFile(file=output_thumb, field_name='ImageField', name=self.original.file.name,
+                                            content_type=self.original.file.content_type,
+                                            size=sys.getsizeof(output_thumb), charset=None)
 
 
 class Tag(models.Model):
